@@ -10,64 +10,83 @@ import {
   MessageSquare,
   Shield,
   Download,
+  Cloud,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
+import { usePassport } from "@/hooks/usePassport";
+import { useAuth } from "@/hooks/useAuth";
 
-const sections = [
+const sectionConfig = [
   {
+    key: "identity",
     icon: User,
     title: "Mon identité",
     description: "Informations personnelles de base",
-    completed: true,
   },
   {
+    key: "trusted_person",
     icon: Heart,
     title: "Personne de confiance",
     description: "Celle qui sera contactée en premier",
-    completed: true,
   },
   {
+    key: "contacts",
     icon: Phone,
     title: "Contacts essentiels",
     description: "Famille, médecin, notaire...",
-    completed: false,
   },
   {
+    key: "documents",
     icon: FolderOpen,
     title: "Documents importants",
     description: "Où les trouver en cas de besoin",
-    completed: false,
   },
   {
+    key: "administrative",
     icon: Wallet,
     title: "Situation financière",
     description: "Banques, assurances, contrats",
-    completed: false,
   },
   {
+    key: "digital",
     icon: Laptop,
     title: "Environnement numérique",
     description: "Comptes en ligne (sans mots de passe)",
-    completed: false,
   },
   {
+    key: "checklists",
     icon: ClipboardCheck,
     title: "Checklists d'urgence",
     description: "Que faire en cas de...",
-    completed: false,
   },
   {
+    key: "personal_message",
     icon: MessageSquare,
     title: "Message personnel",
     description: "Mots pour vos proches (optionnel)",
-    completed: false,
   },
 ];
 
 const Dashboard = () => {
-  const completedCount = sections.filter((s) => s.completed).length;
-  const progress = (completedCount / sections.length) * 100;
+  const { passport, loading, getProgress } = usePassport();
+  const { user } = useAuth();
+  const { completed, total } = getProgress();
+  const progress = (completed / total) * 100;
+
+  const getSectionCompleted = (key: string): boolean => {
+    if (!passport) return false;
+    const completedKey = `${key}_completed` as keyof typeof passport;
+    return Boolean(passport[completedKey]);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="pb-24">
@@ -81,12 +100,18 @@ const Dashboard = () => {
           <div className="w-14 h-14 gradient-hero rounded-xl flex items-center justify-center">
             <Shield className="w-7 h-7 text-primary-foreground" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="font-bold text-lg text-foreground">Mon Passeport</h2>
             <p className="text-sm text-muted-foreground">
-              {completedCount}/{sections.length} sections complétées
+              {completed}/{total} sections complétées
             </p>
           </div>
+          {user && (
+            <div className="flex items-center gap-1 text-xs text-sage">
+              <Cloud className="w-4 h-4" />
+              <span>Synchro</span>
+            </div>
+          )}
         </div>
 
         {/* Progress bar */}
@@ -102,14 +127,14 @@ const Dashboard = () => {
 
       {/* Sections */}
       <div className="space-y-3 mb-6">
-        {sections.map((section, index) => (
+        {sectionConfig.map((section, index) => (
           <PassportSection
-            key={section.title}
+            key={section.key}
             icon={section.icon}
             title={section.title}
             description={section.description}
             index={index}
-            completed={section.completed}
+            completed={getSectionCompleted(section.key)}
           />
         ))}
       </div>
