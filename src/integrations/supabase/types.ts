@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      passports: {
+        Row: {
+          administrative_completed: boolean | null
+          administrative_data: Json | null
+          checklists_completed: boolean | null
+          checklists_data: Json | null
+          contacts_completed: boolean | null
+          contacts_data: Json | null
+          created_at: string
+          digital_completed: boolean | null
+          digital_data: Json | null
+          documents_completed: boolean | null
+          documents_data: Json | null
+          id: string
+          identity_completed: boolean | null
+          identity_data: Json | null
+          personal_message_completed: boolean | null
+          personal_message_data: Json | null
+          trusted_person_completed: boolean | null
+          trusted_person_data: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          administrative_completed?: boolean | null
+          administrative_data?: Json | null
+          checklists_completed?: boolean | null
+          checklists_data?: Json | null
+          contacts_completed?: boolean | null
+          contacts_data?: Json | null
+          created_at?: string
+          digital_completed?: boolean | null
+          digital_data?: Json | null
+          documents_completed?: boolean | null
+          documents_data?: Json | null
+          id?: string
+          identity_completed?: boolean | null
+          identity_data?: Json | null
+          personal_message_completed?: boolean | null
+          personal_message_data?: Json | null
+          trusted_person_completed?: boolean | null
+          trusted_person_data?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          administrative_completed?: boolean | null
+          administrative_data?: Json | null
+          checklists_completed?: boolean | null
+          checklists_data?: Json | null
+          contacts_completed?: boolean | null
+          contacts_data?: Json | null
+          created_at?: string
+          digital_completed?: boolean | null
+          digital_data?: Json | null
+          documents_completed?: boolean | null
+          documents_data?: Json | null
+          id?: string
+          identity_completed?: boolean | null
+          identity_data?: Json | null
+          personal_message_completed?: boolean | null
+          personal_message_data?: Json | null
+          trusted_person_completed?: boolean | null
+          trusted_person_data?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

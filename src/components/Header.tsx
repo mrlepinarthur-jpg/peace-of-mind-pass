@@ -1,15 +1,19 @@
 import { motion } from "framer-motion";
-import { Shield, Menu } from "lucide-react";
+import { Shield, Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface HeaderProps {
   showBack?: boolean;
   onBack?: () => void;
+  user?: SupabaseUser | null;
 }
 
-const Header = ({ showBack, onBack }: HeaderProps) => {
+const Header = ({ showBack, onBack, user }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <motion.header
@@ -31,9 +35,20 @@ const Header = ({ showBack, onBack }: HeaderProps) => {
           </div>
         </div>
 
-        <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
-          <Menu className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <div className="w-8 h-8 bg-sage/20 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-sage" />
+            </div>
+          ) : (
+            <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
+              Connexion
+            </Button>
+          )}
+          <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
+            <Menu className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
     </motion.header>
   );
