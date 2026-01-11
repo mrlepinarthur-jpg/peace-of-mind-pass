@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   User,
@@ -11,11 +12,15 @@ import {
   Shield,
   Download,
   Cloud,
+  LucideIcon,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
 import { usePassport } from "@/hooks/usePassport";
 import { useAuth } from "@/hooks/useAuth";
+import { SectionModal } from "@/components/passport/SectionModal";
+import { generatePassportPDF } from "@/utils/generatePassportPDF";
+import { useToast } from "@/hooks/use-toast";
 
 const sectionConfig = [
   {
@@ -69,15 +74,60 @@ const sectionConfig = [
 ];
 
 const Dashboard = () => {
-  const { passport, loading, getProgress } = usePassport();
+  const { passport, loading, getProgress, updateSection } = usePassport();
   const { user } = useAuth();
+  const { toast } = useToast();
   const { completed, total } = getProgress();
   const progress = (completed / total) * 100;
+
+  const [selectedSection, setSelectedSection] = useState<{
+    key: string;
+    title: string;
+    icon: LucideIcon;
+  } | null>(null);
 
   const getSectionCompleted = (key: string): boolean => {
     if (!passport) return false;
     const completedKey = `${key}_completed` as keyof typeof passport;
     return Boolean(passport[completedKey]);
+  };
+
+  const handleSectionClick = (key: string, title: string, icon: LucideIcon) => {
+    setSelectedSection({ key, title, icon });
+  };
+
+  const handleSaveSection = async (
+    sectionKey: string,
+    data: Record<string, unknown>,
+    completed: boolean
+  ) => {
+    await updateSection(sectionKey, data, completed);
+  };
+
+  const handleDownloadPDF = () => {
+    if (!passport) {
+      toast({
+        title: "Aucune donnée",
+        description: "Remplissez au moins une section avant de télécharger.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (completed === 0) {
+      toast({
+        title: "Passeport vide",
+        description: "Complétez au moins une section pour générer le PDF.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    generatePassportPDF(passport);
+    toast({
+      title: "PDF généré",
+      description: "Votre passeport a été téléchargé.",
+    });
   };
 
   if (loading) {
@@ -135,6 +185,7 @@ const Dashboard = () => {
             description={section.description}
             index={index}
             completed={getSectionCompleted(section.key)}
+            onClick={() => handleSectionClick(section.key, section.title, section.icon)}
           />
         ))}
       </div>
@@ -146,7 +197,11 @@ const Dashboard = () => {
         transition={{ delay: 0.8 }}
         className="grid grid-cols-2 gap-3"
       >
-        <Button variant="outline" className="h-auto py-4 flex-col gap-2">
+        <Button
+          variant="outline"
+          className="h-auto py-4 flex-col gap-2"
+          onClick={handleDownloadPDF}
+        >
           <Download className="w-5 h-5" />
           <span className="text-xs">Télécharger PDF</span>
         </Button>
@@ -155,6 +210,19 @@ const Dashboard = () => {
           <span className="text-xs">Sécuriser</span>
         </Button>
       </motion.div>
+
+      {/* Section Modal */}
+      {selectedSection && (
+        <SectionModal
+          isOpen={!!selectedSection}
+          onClose={() => setSelectedSection(null)}
+          sectionKey={selectedSection.key}
+          title={selectedSection.title}
+          icon={selectedSection.icon}
+          passport={passport}
+          onSave={handleSaveSection}
+        />
+      )}
     </div>
   );
 };
