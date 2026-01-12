@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "./ui/button";
+import { useSubscription, SubscriptionPlan } from "@/hooks/useSubscription";
+import { useToast } from "@/hooks/use-toast";
 
 interface PricingCardProps {
   name: string;
@@ -23,6 +25,11 @@ const PricingCard = ({
   popular,
   index,
 }: PricingCardProps) => {
+  const { plan, setPlan } = useSubscription();
+  const { toast } = useToast();
+  
+  const isCurrentPlan = plan === variant;
+
   const variantStyles = {
     free: {
       badge: "bg-sage-light text-sage",
@@ -43,6 +50,16 @@ const PricingCard = ({
 
   const styles = variantStyles[variant];
 
+  const handleSelectPlan = () => {
+    setPlan(variant as SubscriptionPlan);
+    toast({
+      title: `Formule ${name} activée`,
+      description: variant === "free" 
+        ? "Vous utilisez maintenant la formule gratuite."
+        : `Les fonctionnalités ${name} sont maintenant débloquées !`,
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -50,12 +67,20 @@ const PricingCard = ({
       transition={{ delay: index * 0.15, duration: 0.5, ease: "easeOut" }}
       className={`relative bg-card rounded-2xl p-6 shadow-card border-2 ${styles.border} ${
         popular ? "ring-2 ring-navy" : ""
-      }`}
+      } ${isCurrentPlan ? "ring-2 ring-sage" : ""}`}
     >
-      {popular && (
+      {popular && !isCurrentPlan && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="bg-navy text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
             Populaire
+          </span>
+        </div>
+      )}
+
+      {isCurrentPlan && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="bg-sage text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+            Formule actuelle
           </span>
         </div>
       )}
@@ -82,8 +107,13 @@ const PricingCard = ({
         ))}
       </ul>
 
-      <Button variant={styles.button} className="w-full">
-        Choisir
+      <Button 
+        variant={isCurrentPlan ? "sage" : styles.button} 
+        className="w-full"
+        onClick={handleSelectPlan}
+        disabled={isCurrentPlan}
+      >
+        {isCurrentPlan ? "Formule active" : "Choisir"}
       </Button>
     </motion.div>
   );
