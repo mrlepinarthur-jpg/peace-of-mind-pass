@@ -13,6 +13,7 @@ import {
   Download,
   Cloud,
   LucideIcon,
+  Zap,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { SectionModal } from "@/components/passport/SectionModal";
 import { generatePassportPDF } from "@/utils/generatePassportPDF";
 import { useToast } from "@/hooks/use-toast";
+import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 
 const sectionConfig = [
   {
@@ -85,6 +87,12 @@ const Dashboard = () => {
     title: string;
     icon: LucideIcon;
   } | null>(null);
+  const [showActivateDialog, setShowActivateDialog] = useState(false);
+
+  // Get trusted person info from passport data
+  const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
+  const trustedPersonEmail = trustedPersonData?.email;
+  const trustedPersonName = trustedPersonData?.fullName;
 
   const getSectionCompleted = (key: string): boolean => {
     if (!passport) return false;
@@ -190,6 +198,24 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Activate Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="mb-4"
+      >
+        <Button
+          variant="hero"
+          size="lg"
+          className="w-full h-auto py-4 text-base font-semibold gap-3"
+          onClick={() => setShowActivateDialog(true)}
+        >
+          <Zap className="w-5 h-5" />
+          Activer mon Passeport de Vie
+        </Button>
+      </motion.div>
+
       {/* Actions */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -210,6 +236,16 @@ const Dashboard = () => {
           <span className="text-xs">Sécuriser</span>
         </Button>
       </motion.div>
+
+      {/* Activate Passport Dialog */}
+      <ActivatePassportDialog
+        isOpen={showActivateDialog}
+        onClose={() => setShowActivateDialog(false)}
+        passport={passport}
+        trustedPersonEmail={trustedPersonEmail}
+        trustedPersonName={trustedPersonName}
+        hasPremiumPlan={false} // TODO: Connect to actual subscription status
+      />
 
       {/* Section Modal */}
       {selectedSection && (
