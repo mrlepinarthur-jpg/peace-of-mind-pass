@@ -19,6 +19,7 @@ import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
 import { usePassport } from "@/hooks/usePassport";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { SectionModal } from "@/components/passport/SectionModal";
 import { generatePassportPDF } from "@/utils/generatePassportPDF";
 import { useToast } from "@/hooks/use-toast";
@@ -79,6 +80,7 @@ const Dashboard = () => {
   const { passport, loading, getProgress, updateSection } = usePassport();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isPremium, planName } = useSubscription();
   const { completed, total } = getProgress();
   const progress = (completed / total) * 100;
 
@@ -244,7 +246,7 @@ const Dashboard = () => {
         passport={passport}
         trustedPersonEmail={trustedPersonEmail}
         trustedPersonName={trustedPersonName}
-        hasPremiumPlan={false} // TODO: Connect to actual subscription status
+        hasPremiumPlan={isPremium}
       />
 
       {/* Section Modal */}
