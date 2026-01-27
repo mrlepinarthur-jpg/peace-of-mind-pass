@@ -5,9 +5,9 @@ import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
+import Profile from "./Profile";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { LogOut, User, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -22,10 +22,6 @@ const Index = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    setActiveTab("home");
-  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -38,33 +34,11 @@ const Index = () => {
         }
         return <Dashboard />;
       case "profile":
-        return (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-              <User className="w-8 h-8 text-muted-foreground" />
-            </div>
-            {user ? (
-              <>
-                <h2 className="text-xl font-bold text-foreground mb-2">Mon Profil</h2>
-                <p className="text-muted-foreground text-sm mb-4">{user.email}</p>
-                <Button variant="outline" onClick={handleSignOut} className="gap-2">
-                  <LogOut className="w-4 h-4" />
-                  Se déconnecter
-                </Button>
-              </>
-            ) : (
-              <>
-                <h2 className="text-xl font-bold text-foreground mb-2">Mon Profil</h2>
-                <p className="text-muted-foreground text-sm mb-4">
-                  Connectez-vous pour accéder à votre profil
-                </p>
-                <Button variant="hero" onClick={() => navigate("/auth")}>
-                  Se connecter
-                </Button>
-              </>
-            )}
-          </div>
-        );
+        if (!user) {
+          navigate("/auth");
+          return null;
+        }
+        return <Profile />;
       case "settings":
         return (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
