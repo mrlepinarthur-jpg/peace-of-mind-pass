@@ -6,8 +6,8 @@ import BottomNav from "@/components/BottomNav";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
+import Settings from "./Settings";
 import { useAuth } from "@/hooks/useAuth";
-import { Settings } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -40,17 +40,7 @@ const Index = () => {
         }
         return <Profile />;
       case "settings":
-        return (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-              <Settings className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">Réglages</h2>
-            <p className="text-muted-foreground text-sm">
-              Personnalisez votre expérience
-            </p>
-          </div>
-        );
+        return <Settings />;
       default:
         return null;
     }
