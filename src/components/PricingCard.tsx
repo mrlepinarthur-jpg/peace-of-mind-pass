@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useSubscription, SubscriptionPlan } from "@/hooks/useSubscription";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PricingCardProps {
   name: string;
@@ -26,8 +29,10 @@ const PricingCard = ({
   index,
 }: PricingCardProps) => {
   const { plan, setPlan } = useSubscription();
+  const { user } = useAuth();
   const { toast } = useToast();
-  
+  const [loading, setLoading] = useState(false);
+
   const isCurrentPlan = plan === variant;
 
   const variantStyles = {
@@ -50,14 +55,51 @@ const PricingCard = ({
 
   const styles = variantStyles[variant];
 
-  const handleSelectPlan = () => {
-    setPlan(variant as SubscriptionPlan);
-    toast({
-      title: `Formule ${name} activée`,
-      description: variant === "free" 
-        ? "Vous utilisez maintenant la formule gratuite."
-        : `Les fonctionnalités ${name} sont maintenant débloquées !`,
-    });
+  const handleSelectPlan = async () => {
+    if (variant === "free") {
+      setPlan("free");
+      toast({
+        title: "Formule Essentiel activée",
+        description: "Vous utilisez maintenant la formule gratuite.",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Veuillez vous connecter pour souscrire à un abonnement.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("stripe-checkout", {
+        body: {
+          priceId: variant,
+          userEmail: user.email,
+          returnUrl: window.location.origin,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err: any) {
+      console.error("Checkout error:", err);
+      toast({
+        title: "Erreur",
+        description: "Impossible de lancer le paiement. Réessayez plus tard.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,13 +149,22 @@ const PricingCard = ({
         ))}
       </ul>
 
-      <Button 
-        variant={isCurrentPlan ? "sage" : styles.button} 
+      <Button
+        variant={isCurrentPlan ? "sage" : styles.button}
         className="w-full"
         onClick={handleSelectPlan}
-        disabled={isCurrentPlan}
+        disabled={isCurrentPlan || loading}
       >
-        {isCurrentPlan ? "Formule active" : "Choisir"}
+        {loading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            Redirection...
+          </>
+        ) : isCurrentPlan ? (
+          "Formule active"
+        ) : (
+          "Choisir"
+        )}
       </Button>
     </motion.div>
   );
