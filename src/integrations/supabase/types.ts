@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      emergency_access_requests: {
+        Row: {
+          access_expires_at: string | null
+          access_granted_at: string | null
+          access_token: string | null
+          created_at: string
+          denial_token: string | null
+          id: string
+          otp_code: string
+          otp_expires_at: string
+          otp_verified: boolean
+          owner_user_id: string
+          security_verified: boolean
+          status: string
+          trusted_email: string
+          waiting_until: string | null
+        }
+        Insert: {
+          access_expires_at?: string | null
+          access_granted_at?: string | null
+          access_token?: string | null
+          created_at?: string
+          denial_token?: string | null
+          id?: string
+          otp_code: string
+          otp_expires_at: string
+          otp_verified?: boolean
+          owner_user_id: string
+          security_verified?: boolean
+          status?: string
+          trusted_email: string
+          waiting_until?: string | null
+        }
+        Update: {
+          access_expires_at?: string | null
+          access_granted_at?: string | null
+          access_token?: string | null
+          created_at?: string
+          denial_token?: string | null
+          id?: string
+          otp_code?: string
+          otp_expires_at?: string
+          otp_verified?: boolean
+          owner_user_id?: string
+          security_verified?: boolean
+          status?: string
+          trusted_email?: string
+          waiting_until?: string | null
+        }
+        Relationships: []
+      }
       passports: {
         Row: {
           administrative_completed: boolean | null
@@ -142,6 +193,45 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trusted_access: {
+        Row: {
+          created_at: string
+          id: string
+          security_answer: string | null
+          security_code: string | null
+          security_method: string
+          security_question: string | null
+          trusted_email: string
+          trusted_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          security_answer?: string | null
+          security_code?: string | null
+          security_method?: string
+          security_question?: string | null
+          trusted_email: string
+          trusted_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          security_answer?: string | null
+          security_code?: string | null
+          security_method?: string
+          security_question?: string | null
+          trusted_email?: string
+          trusted_name?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
