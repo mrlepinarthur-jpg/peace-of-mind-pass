@@ -92,7 +92,7 @@ const Dashboard = () => {
     icon: LucideIcon;
   } | null>(null);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
-
+  const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
   // Get trusted person info from passport data
   const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
   const trustedPersonEmail = trustedPersonData?.email;
