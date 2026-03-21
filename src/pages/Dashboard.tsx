@@ -14,6 +14,8 @@ import {
   Cloud,
   LucideIcon,
   Zap,
+  AlertTriangle,
+  Lock,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,7 @@ import { SectionModal } from "@/components/passport/SectionModal";
 import { generatePassportPDF } from "@/utils/generatePassportPDF";
 import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
-
+import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
 const sectionConfig = [
   {
     key: "identity",
