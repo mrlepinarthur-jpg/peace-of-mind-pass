@@ -220,6 +220,26 @@ const Dashboard = () => {
         </Button>
       </motion.div>
 
+      {/* Emergency Activation Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="mb-4"
+      >
+        <Button
+          variant="destructive"
+          size="lg"
+          className="w-full h-auto py-4 text-base font-semibold gap-3 relative"
+          onClick={() => isPremium ? setShowEmergencyDialog(true) : null}
+          disabled={!isPremium}
+        >
+          {!isPremium && <Lock className="w-5 h-5 absolute left-4" />}
+          <AlertTriangle className="w-5 h-5" />
+          {isPremium ? "Activer mon Passeport d'Urgence" : "Passeport d'Urgence (Premium)"}
+        </Button>
+      </motion.div>
+
       {/* Actions */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -249,6 +269,12 @@ const Dashboard = () => {
         trustedPersonEmail={trustedPersonEmail}
         trustedPersonName={trustedPersonName}
         hasPremiumPlan={isPremium}
+      />
+
+      {/* Emergency Activation Dialog */}
+      <EmergencyActivationDialog
+        isOpen={showEmergencyDialog}
+        onClose={() => setShowEmergencyDialog(false)}
       />
 
       {/* Section Modal */}
