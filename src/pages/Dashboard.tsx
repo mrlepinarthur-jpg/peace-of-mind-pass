@@ -14,6 +14,8 @@ import {
   Cloud,
   LucideIcon,
   Zap,
+  AlertTriangle,
+  Lock,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,7 @@ import { SectionModal } from "@/components/passport/SectionModal";
 import { generatePassportPDF } from "@/utils/generatePassportPDF";
 import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
-
+import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
 const sectionConfig = [
   {
     key: "identity",
@@ -90,7 +92,7 @@ const Dashboard = () => {
     icon: LucideIcon;
   } | null>(null);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
-
+  const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
   // Get trusted person info from passport data
   const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
   const trustedPersonEmail = trustedPersonData?.email;
@@ -218,6 +220,26 @@ const Dashboard = () => {
         </Button>
       </motion.div>
 
+      {/* Emergency Activation Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="mb-4"
+      >
+        <Button
+          variant="destructive"
+          size="lg"
+          className="w-full h-auto py-4 text-base font-semibold gap-3 relative"
+          onClick={() => isPremium ? setShowEmergencyDialog(true) : null}
+          disabled={!isPremium}
+        >
+          {!isPremium && <Lock className="w-5 h-5 absolute left-4" />}
+          <AlertTriangle className="w-5 h-5" />
+          {isPremium ? "Activer mon Passeport d'Urgence" : "Passeport d'Urgence (Premium)"}
+        </Button>
+      </motion.div>
+
       {/* Actions */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -247,6 +269,12 @@ const Dashboard = () => {
         trustedPersonEmail={trustedPersonEmail}
         trustedPersonName={trustedPersonName}
         hasPremiumPlan={isPremium}
+      />
+
+      {/* Emergency Activation Dialog */}
+      <EmergencyActivationDialog
+        isOpen={showEmergencyDialog}
+        onClose={() => setShowEmergencyDialog(false)}
       />
 
       {/* Section Modal */}
