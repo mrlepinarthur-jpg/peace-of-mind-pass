@@ -6,12 +6,85 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const FROM_EMAIL = "Passeport de Vie <onboarding@resend.dev>";
+
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 function generateToken(): string {
   return crypto.randomUUID() + "-" + crypto.randomUUID();
+}
+
+async function sendEmail(to: string, subject: string, html: string) {
+  const resendKey = Deno.env.get("RESEND_API_KEY");
+  if (!resendKey) {
+    console.error("RESEND_API_KEY not configured");
+    return;
+  }
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ from: FROM_EMAIL, to: [to], subject, html }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error(`Resend error: ${res.status} ${err}`);
+  } else {
+    console.log(`Email sent to ${to}: ${subject}`);
+  }
+}
+
+function otpEmailHtml(otp: string, trustedName: string): string {
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:30px">
+      <h2 style="color:#1a1a2e">Passeport de Vie – Code de vérification</h2>
+      <p>Bonjour <strong>${trustedName}</strong>,</p>
+      <p>Une demande d'accès d'urgence a été initiée. Voici votre code de vérification :</p>
+      <div style="background:#f0f0f5;border-radius:12px;padding:20px;text-align:center;margin:20px 0">
+        <span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#1a1a2e">${otp}</span>
+      </div>
+      <p style="color:#666;font-size:14px">Ce code expire dans <strong>10 minutes</strong>.</p>
+      <p style="color:#999;font-size:12px">Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
+    </div>`;
+}
+
+function ownerNotificationHtml(trustedEmail: string, denyUrl: string): string {
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:30px">
+      <h2 style="color:#1a1a2e">⚠️ Demande d'accès d'urgence</h2>
+      <p>Une personne (<strong>${trustedEmail}</strong>) a demandé l'accès à votre Passeport de Vie.</p>
+      <p>L'accès sera automatiquement accordé dans <strong>1 heure</strong> si vous ne réagissez pas.</p>
+      <div style="text-align:center;margin:25px 0">
+        <a href="${denyUrl}" style="background:#dc2626;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px">
+          🚫 Refuser l'accès
+        </a>
+      </div>
+      <p style="color:#999;font-size:12px">Si vous êtes à l'origine de cette demande, aucune action n'est requise.</p>
+    </div>`;
+}
+
+function accessGrantedHtml(trustedName: string, accessUrl: string, expiresAt: string): string {
+  const expDate = new Date(expiresAt).toLocaleString("fr-FR", { timeZone: "Europe/Paris" });
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:30px">
+      <h2 style="color:#1a1a2e">✅ Accès au Passeport de Vie accordé</h2>
+      <p>Bonjour <strong>${trustedName}</strong>,</p>
+      <p>Vous avez maintenant accès au Passeport de Vie en lecture seule.</p>
+      <div style="text-align:center;margin:25px 0">
+        <a href="${accessUrl}" style="background:#1a1a2e;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px">
+          📄 Consulter le Passeport
+        </a>
+      </div>
+      <p style="color:#666;font-size:14px">Cet accès expire le <strong>${expDate}</strong>.</p>
+    </div>`;
+}
+
+function getAppBaseUrl(): string {
+  return "https://peace-of-mind-pass.lovable.app";
 }
 
 Deno.serve(async (req) => {
@@ -36,7 +109,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Find trusted_access record matching this email
       const { data: trustedAccess } = await supabase
         .from("trusted_access")
         .select("*")
@@ -51,9 +123,8 @@ Deno.serve(async (req) => {
       }
 
       const otp = generateOTP();
-      const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 min
+      const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-      // Create emergency request
       const { data: request, error } = await supabase
         .from("emergency_access_requests")
         .insert({
@@ -68,8 +139,12 @@ Deno.serve(async (req) => {
 
       if (error) throw error;
 
-      // In production, send OTP via email. For now, log it.
-      console.log(`OTP for ${email}: ${otp}`);
+      // Send OTP email
+      await sendEmail(
+        email,
+        "Votre code de vérification – Passeport de Vie",
+        otpEmailHtml(otp, trustedAccess.trusted_name)
+      );
 
       return new Response(
         JSON.stringify({
@@ -119,7 +194,6 @@ Deno.serve(async (req) => {
         .update({ otp_verified: true, status: "otp_verified" })
         .eq("id", requestId);
 
-      // Get security method
       const { data: trustedAccess } = await supabase
         .from("trusted_access")
         .select("security_method, security_question")
@@ -166,6 +240,13 @@ Deno.serve(async (req) => {
         });
       }
 
+      // Get owner email for notifications
+      const { data: ownerProfile } = await supabase
+        .from("profiles")
+        .select("email, full_name")
+        .eq("user_id", request.owner_user_id)
+        .single();
+
       let securityOk = false;
 
       if (trustedAccess.security_method === "code") {
@@ -177,7 +258,7 @@ Deno.serve(async (req) => {
       } else {
         // No security method - waiting approval mode
         const denialToken = generateToken();
-        const waitingUntil = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+        const waitingUntil = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
         await supabase
           .from("emergency_access_requests")
@@ -188,8 +269,15 @@ Deno.serve(async (req) => {
           })
           .eq("id", requestId);
 
-        // TODO: Send notification email to owner with denial link
-        console.log(`Denial link token: ${denialToken}`);
+        // Send notification to owner with denial link
+        if (ownerProfile?.email) {
+          const denyUrl = `${getAppBaseUrl()}/deny-access?token=${denialToken}`;
+          await sendEmail(
+            ownerProfile.email,
+            "⚠️ Demande d'accès d'urgence à votre Passeport de Vie",
+            ownerNotificationHtml(request.trusted_email, denyUrl)
+          );
+        }
 
         return new Response(
           JSON.stringify({
@@ -211,7 +299,7 @@ Deno.serve(async (req) => {
 
       // Grant immediate access
       const accessToken = generateToken();
-      const accessExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
+      const accessExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
       await supabase
         .from("emergency_access_requests")
@@ -223,6 +311,14 @@ Deno.serve(async (req) => {
           access_expires_at: accessExpiresAt,
         })
         .eq("id", requestId);
+
+      // Send access granted email to trusted person
+      const accessUrl = `${getAppBaseUrl()}/access/${accessToken}`;
+      await sendEmail(
+        request.trusted_email,
+        "✅ Accès accordé – Passeport de Vie",
+        accessGrantedHtml(trustedAccess.trusted_name, accessUrl, accessExpiresAt)
+      );
 
       return new Response(
         JSON.stringify({
@@ -281,6 +377,21 @@ Deno.serve(async (req) => {
               access_expires_at: accessExpiresAt,
             })
             .eq("id", requestId);
+
+          // Get trusted access info for email
+          const { data: trustedAccess } = await supabase
+            .from("trusted_access")
+            .select("trusted_name")
+            .eq("user_id", request.owner_user_id)
+            .single();
+
+          // Send access granted email
+          const accessUrl = `${getAppBaseUrl()}/access/${accessToken}`;
+          await sendEmail(
+            request.trusted_email,
+            "✅ Accès accordé – Passeport de Vie",
+            accessGrantedHtml(trustedAccess?.trusted_name || "Personne de confiance", accessUrl, accessExpiresAt)
+          );
 
           return new Response(
             JSON.stringify({ status: "granted", accessToken, expiresAt: accessExpiresAt }),
@@ -368,7 +479,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Fetch the passport
       const { data: passport } = await supabase
         .from("passports")
         .select("*")
@@ -382,7 +492,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Get owner profile
       const { data: profile } = await supabase
         .from("profiles")
         .select("full_name, email")
@@ -421,7 +530,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Get trusted access config
       const { data: trustedAccess } = await supabase
         .from("trusted_access")
         .select("*")
@@ -451,8 +559,13 @@ Deno.serve(async (req) => {
         status: "granted",
       });
 
-      // TODO: Send email to trusted person with access link
-      console.log(`Direct access link for ${trustedAccess.trusted_email}: /access/${accessToken}`);
+      // Send access email to trusted person
+      const accessUrl = `${getAppBaseUrl()}/access/${accessToken}`;
+      await sendEmail(
+        trustedAccess.trusted_email,
+        "✅ Accès accordé – Passeport de Vie",
+        accessGrantedHtml(trustedAccess.trusted_name, accessUrl, accessExpiresAt)
+      );
 
       return new Response(
         JSON.stringify({
