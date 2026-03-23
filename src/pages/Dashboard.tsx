@@ -1,99 +1,46 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  User,
-  Heart,
-  Phone,
-  FolderOpen,
-  Wallet,
-  Laptop,
-  ClipboardCheck,
-  MessageSquare,
-  Shield,
-  Download,
-  Cloud,
-  LucideIcon,
-  Zap,
-  AlertTriangle,
-  Lock,
+  User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck,
+  MessageSquare, Shield, Download, Cloud, LucideIcon, Zap,
+  AlertTriangle, Lock, Crown,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
 import { usePassport } from "@/hooks/usePassport";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useSubscription, isPremiumSection } from "@/hooks/useSubscription";
 import { SectionModal } from "@/components/passport/SectionModal";
-import { generatePassportPDF } from "@/utils/generatePassportPDF";
+import { generatePassportPDF, generateFreePDF } from "@/utils/generatePassportPDF";
 import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
+
 const sectionConfig = [
-  {
-    key: "identity",
-    icon: User,
-    title: "Mon identité",
-    description: "Informations personnelles de base",
-  },
-  {
-    key: "trusted_person",
-    icon: Heart,
-    title: "Personne de confiance",
-    description: "Celle qui sera contactée en premier",
-  },
-  {
-    key: "contacts",
-    icon: Phone,
-    title: "Contacts essentiels",
-    description: "Famille, médecin, notaire...",
-  },
-  {
-    key: "documents",
-    icon: FolderOpen,
-    title: "Documents importants",
-    description: "Où les trouver en cas de besoin",
-  },
-  {
-    key: "administrative",
-    icon: Wallet,
-    title: "Situation financière",
-    description: "Banques, assurances, contrats",
-  },
-  {
-    key: "digital",
-    icon: Laptop,
-    title: "Environnement numérique",
-    description: "Comptes en ligne (sans mots de passe)",
-  },
-  {
-    key: "checklists",
-    icon: ClipboardCheck,
-    title: "Checklists d'urgence",
-    description: "Que faire en cas de...",
-  },
-  {
-    key: "personal_message",
-    icon: MessageSquare,
-    title: "Message personnel",
-    description: "Mots pour vos proches (optionnel)",
-  },
+  { key: "identity", icon: User, title: "Mon identité", description: "Informations personnelles de base" },
+  { key: "trusted_person", icon: Heart, title: "Personne de confiance", description: "Celle qui sera contactée en premier" },
+  { key: "contacts", icon: Phone, title: "Contacts essentiels", description: "Famille, médecin, notaire..." },
+  { key: "documents", icon: FolderOpen, title: "Documents importants", description: "Où les trouver en cas de besoin" },
+  { key: "administrative", icon: Wallet, title: "Situation financière", description: "Banques, assurances, contrats" },
+  { key: "digital", icon: Laptop, title: "Environnement numérique", description: "Comptes en ligne (sans mots de passe)" },
+  { key: "checklists", icon: ClipboardCheck, title: "Checklists d'urgence", description: "Que faire en cas de..." },
+  { key: "personal_message", icon: MessageSquare, title: "Message personnel", description: "Mots pour vos proches (optionnel)" },
 ];
 
 const Dashboard = () => {
   const { passport, loading, getProgress, updateSection } = usePassport();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { isPremium, planName } = useSubscription();
+  const { isPremium, planName, isTrialing, trialDaysLeft } = useSubscription();
   const { completed, total } = getProgress();
   const progress = (completed / total) * 100;
 
   const [selectedSection, setSelectedSection] = useState<{
-    key: string;
-    title: string;
-    icon: LucideIcon;
+    key: string; title: string; icon: LucideIcon;
   } | null>(null);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
   const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
-  // Get trusted person info from passport data
+
   const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
   const trustedPersonEmail = trustedPersonData?.email;
   const trustedPersonName = trustedPersonData?.fullName;
@@ -105,41 +52,39 @@ const Dashboard = () => {
   };
 
   const handleSectionClick = (key: string, title: string, icon: LucideIcon) => {
+    if (!isPremium && isPremiumSection(key)) {
+      toast({
+        title: "Section Premium",
+        description: "Passez à la formule Sérénité pour débloquer cette section.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSelectedSection({ key, title, icon });
   };
 
   const handleSaveSection = async (
-    sectionKey: string,
-    data: Record<string, unknown>,
-    completed: boolean
+    sectionKey: string, data: Record<string, unknown>, completed: boolean
   ) => {
     await updateSection(sectionKey, data, completed);
   };
 
   const handleDownloadPDF = () => {
     if (!passport) {
-      toast({
-        title: "Aucune donnée",
-        description: "Remplissez au moins une section avant de télécharger.",
-        variant: "destructive",
-      });
+      toast({ title: "Aucune donnée", description: "Remplissez au moins une section avant de télécharger.", variant: "destructive" });
       return;
     }
-
     if (completed === 0) {
-      toast({
-        title: "Passeport vide",
-        description: "Complétez au moins une section pour générer le PDF.",
-        variant: "destructive",
-      });
+      toast({ title: "Passeport vide", description: "Complétez au moins une section pour générer le PDF.", variant: "destructive" });
       return;
     }
 
-    generatePassportPDF(passport);
-    toast({
-      title: "PDF généré",
-      description: "Votre passeport a été téléchargé.",
-    });
+    if (isPremium) {
+      generatePassportPDF(passport);
+    } else {
+      generateFreePDF(passport);
+    }
+    toast({ title: "PDF généré", description: isPremium ? "Votre passeport complet a été téléchargé." : "PDF limité aux sections gratuites. Passez à Sérénité pour l'export complet." });
   };
 
   if (loading) {
@@ -152,6 +97,20 @@ const Dashboard = () => {
 
   return (
     <div className="pb-24">
+      {/* Trial Banner */}
+      {isTrialing && trialDaysLeft !== null && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-navy/10 border border-navy/20 rounded-xl p-3 mb-4 flex items-center gap-2 text-sm"
+        >
+          <Crown className="w-4 h-4 text-navy flex-shrink-0" />
+          <span className="text-foreground">
+            Essai gratuit — <strong>{trialDaysLeft} jour{trialDaysLeft > 1 ? "s" : ""}</strong> restant{trialDaysLeft > 1 ? "s" : ""}
+          </span>
+        </motion.div>
+      )}
+
       {/* Progress Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -175,8 +134,6 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-
-        {/* Progress bar */}
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
@@ -189,44 +146,33 @@ const Dashboard = () => {
 
       {/* Sections */}
       <div className="space-y-3 mb-6">
-        {sectionConfig.map((section, index) => (
-          <PassportSection
-            key={section.key}
-            icon={section.icon}
-            title={section.title}
-            description={section.description}
-            index={index}
-            completed={getSectionCompleted(section.key)}
-            onClick={() => handleSectionClick(section.key, section.title, section.icon)}
-          />
-        ))}
+        {sectionConfig.map((section, index) => {
+          const isLocked = !isPremium && isPremiumSection(section.key);
+          return (
+            <PassportSection
+              key={section.key}
+              icon={section.icon}
+              title={section.title}
+              description={section.description}
+              index={index}
+              completed={getSectionCompleted(section.key)}
+              locked={isLocked}
+              onClick={() => handleSectionClick(section.key, section.title, section.icon)}
+            />
+          );
+        })}
       </div>
 
       {/* Activate Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="mb-4"
-      >
-        <Button
-          variant="hero"
-          size="lg"
-          className="w-full h-auto py-4 text-base font-semibold gap-3"
-          onClick={() => setShowActivateDialog(true)}
-        >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mb-4">
+        <Button variant="hero" size="lg" className="w-full h-auto py-4 text-base font-semibold gap-3" onClick={() => setShowActivateDialog(true)}>
           <Zap className="w-5 h-5" />
           Activer mon Passeport de Vie
         </Button>
       </motion.div>
 
       {/* Emergency Activation Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="mb-4"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="mb-4">
         <Button
           variant="destructive"
           size="lg"
@@ -241,19 +187,16 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Actions */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="grid grid-cols-2 gap-3"
-      >
-        <Button
-          variant="outline"
-          className="h-auto py-4 flex-col gap-2"
-          onClick={handleDownloadPDF}
-        >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="grid grid-cols-2 gap-3">
+        <Button variant="outline" className="h-auto py-4 flex-col gap-2 relative" onClick={handleDownloadPDF}>
           <Download className="w-5 h-5" />
           <span className="text-xs">Télécharger PDF</span>
+          {!isPremium && (
+            <span className="absolute top-1 right-1 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-navy/10 text-navy text-[9px] font-semibold">
+              <Crown className="w-2.5 h-2.5" />
+              Limité
+            </span>
+          )}
         </Button>
         <Button variant="sage" className="h-auto py-4 flex-col gap-2">
           <Shield className="w-5 h-5" />
@@ -261,7 +204,6 @@ const Dashboard = () => {
         </Button>
       </motion.div>
 
-      {/* Activate Passport Dialog */}
       <ActivatePassportDialog
         isOpen={showActivateDialog}
         onClose={() => setShowActivateDialog(false)}
@@ -271,13 +213,11 @@ const Dashboard = () => {
         hasPremiumPlan={isPremium}
       />
 
-      {/* Emergency Activation Dialog */}
       <EmergencyActivationDialog
         isOpen={showEmergencyDialog}
         onClose={() => setShowEmergencyDialog(false)}
       />
 
-      {/* Section Modal */}
       {selectedSection && (
         <SectionModal
           isOpen={!!selectedSection}
