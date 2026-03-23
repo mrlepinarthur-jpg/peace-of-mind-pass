@@ -8,6 +8,8 @@ interface SubscriptionContextType {
   plan: SubscriptionPlan;
   setPlan: (plan: SubscriptionPlan) => void;
   isPremium: boolean;
+  isTrialing: boolean;
+  trialDaysLeft: number | null;
   canSendToTrustedPerson: boolean;
   canAccessVault: boolean;
   canAccessHistory: boolean;
@@ -16,16 +18,45 @@ interface SubscriptionContextType {
   loading: boolean;
 }
 
+const FREE_SECTIONS = ["identity", "contacts", "documents"];
+const PREMIUM_SECTIONS = ["trusted_person", "administrative", "digital", "checklists", "personal_message"];
+
+export const isFreeSection = (key: string) => FREE_SECTIONS.includes(key);
+export const isPremiumSection = (key: string) => PREMIUM_SECTIONS.includes(key);
+
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const [plan, setPlanState] = useState<SubscriptionPlan>("free");
+  const [isTrialing, setIsTrialing] = useState(false);
+  const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+
+  const computeTrialState = (trialEndDate: string | null) => {
+    if (!trialEndDate) {
+      setIsTrialing(false);
+      setTrialDaysLeft(null);
+      return false;
+    }
+    const end = new Date(trialEndDate);
+    const now = new Date();
+    if (end > now) {
+      const days = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      setIsTrialing(true);
+      setTrialDaysLeft(days);
+      return true;
+    }
+    setIsTrialing(false);
+    setTrialDaysLeft(null);
+    return false;
+  };
 
   useEffect(() => {
     if (!user) {
       setPlanState("free");
+      setIsTrialing(false);
+      setTrialDaysLeft(null);
       setLoading(false);
       return;
     }
@@ -33,12 +64,22 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     const fetchSubscription = async () => {
       const { data } = await supabase
         .from("subscriptions")
-        .select("plan, status")
+        .select("plan, status, trial_end_date")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (data && data.status === "active" && data.plan) {
-        setPlanState(data.plan as SubscriptionPlan);
+      if (data) {
+        const trialEndDate = (data as any).trial_end_date as string | null;
+        const trialActive = computeTrialState(trialEndDate);
+
+        if (data.status === "active" && data.plan) {
+          setPlanState(data.plan as SubscriptionPlan);
+        } else if (trialActive) {
+          // Trial active but no paid subscription — give premium access
+          setPlanState((data.plan as SubscriptionPlan) || "serenity");
+        } else {
+          setPlanState("free");
+        }
       } else {
         setPlanState("free");
       }
@@ -47,7 +88,6 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
 
     fetchSubscription();
 
-    // Listen for realtime changes
     const channel = supabase
       .channel("subscription-changes")
       .on(
@@ -55,8 +95,11 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
         { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${user.id}` },
         (payload: any) => {
           const newData = payload.new;
+          const trialActive = computeTrialState(newData?.trial_end_date);
           if (newData?.status === "active" && newData?.plan) {
             setPlanState(newData.plan as SubscriptionPlan);
+          } else if (trialActive) {
+            setPlanState(newData?.plan || "serenity");
           } else if (newData?.status === "canceled") {
             setPlanState("free");
           }
@@ -85,6 +128,8 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
         plan,
         setPlan,
         isPremium,
+        isTrialing,
+        trialDaysLeft,
         canSendToTrustedPerson: isPremium,
         canAccessVault: isPremium,
         canAccessHistory: isPremium,
