@@ -203,6 +203,34 @@ const addPersonalMessage = (pdf: ReturnType<typeof setupDoc>, passport: Passport
   }
 };
 
+const addHealth = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => {
+  const data = passport.health_data as Record<string, unknown> | null;
+  if (data && passport.health_completed) {
+    pdf.addSection("5. Fiche Santé", () => {
+      pdf.addField("Groupe sanguin", data.bloodType as string);
+      pdf.addField("Allergies", data.allergies as string);
+      pdf.addField("Médecin traitant", data.doctorName as string);
+      pdf.addField("Tél. médecin", data.doctorPhone as string);
+      pdf.addField("Adresse médecin", data.doctorAddress as string);
+      pdf.addField("N° sécurité sociale", data.socialSecurityNumber as string);
+      pdf.addField("Antécédents", data.medicalHistory as string);
+      pdf.addField("Directives anticipées", data.hasAdvanceDirectives === "yes" ? `Oui — ${data.advanceDirectivesLocation || ""}` : "Non");
+      const specialists = data.specialists as Array<Record<string, string>> | undefined;
+      if (specialists) {
+        specialists.forEach((s, i) => {
+          if (s.name) pdf.addField(`Spécialiste ${i + 1}`, `${s.specialty} — ${s.name} (${s.phone})`);
+        });
+      }
+      const treatments = data.treatments as Array<Record<string, string>> | undefined;
+      if (treatments) {
+        treatments.forEach((t, i) => {
+          if (t.medication) pdf.addField(`Traitement ${i + 1}`, `${t.medication} — ${t.dosage} — ${t.frequency}`);
+        });
+      }
+    });
+  }
+};
+
 export const generatePassportPDF = (passport: PassportData) => {
   const pdf = setupDoc();
   pdf.addHeader();
@@ -210,6 +238,7 @@ export const generatePassportPDF = (passport: PassportData) => {
   addTrustedPerson(pdf, passport);
   addContacts(pdf, passport);
   addDocuments(pdf, passport);
+  addHealth(pdf, passport);
   addAdministrative(pdf, passport);
   addDigital(pdf, passport);
   addChecklists(pdf, passport);
