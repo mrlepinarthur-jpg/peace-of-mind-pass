@@ -251,10 +251,11 @@ export const generateFreePDF = (passport: PassportData) => {
   const pdf = setupDoc();
   pdf.addHeader();
 
-  // Free plan: only identity, contacts, documents
+  // Free plan: identity, contacts, documents, health
   addIdentity(pdf, passport);
   addContacts(pdf, passport);
   addDocuments(pdf, passport);
+  addHealth(pdf, passport);
 
   // Upsell notice
   pdf.doc.setFontSize(11);

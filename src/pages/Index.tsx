@@ -7,6 +7,7 @@ import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
 import Settings from "./Settings";
+import SharedPassports from "./SharedPassports";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -33,6 +34,12 @@ const Index = () => {
           return null;
         }
         return <Dashboard />;
+      case "shared":
+        if (!user) {
+          navigate("/auth");
+          return null;
+        }
+        return <SharedPassports />;
       case "profile":
         if (!user) {
           navigate("/auth");

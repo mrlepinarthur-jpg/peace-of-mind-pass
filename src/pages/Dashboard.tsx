@@ -158,6 +158,7 @@ const Dashboard = () => {
               index={index}
               completed={getSectionCompleted(section.key)}
               locked={isLocked}
+              badge={(section as any).badge}
               onClick={() => handleSectionClick(section.key, section.title, section.icon)}
             />
           );
