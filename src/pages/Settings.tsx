@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import {
@@ -31,6 +32,8 @@ import {
   Download,
   Info,
   ExternalLink,
+  CreditCard,
+  Crown,
 } from "lucide-react";
 
 const Settings = () => {
