@@ -59,6 +59,8 @@ export const SectionModal = ({
         return <ContactsForm data={data} onSave={handleSave} />;
       case "documents":
         return <DocumentsForm data={data} onSave={handleSave} />;
+      case "health":
+        return <HealthForm data={data} onSave={handleSave} />;
       case "administrative":
         return <AdministrativeForm data={data} onSave={handleSave} />;
       case "digital":
