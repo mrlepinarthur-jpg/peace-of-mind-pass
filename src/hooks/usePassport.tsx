@@ -13,6 +13,8 @@ export interface PassportData {
   contacts_completed: boolean;
   documents_data: unknown;
   documents_completed: boolean;
+  health_data: unknown;
+  health_completed: boolean;
   administrative_data: unknown;
   administrative_completed: boolean;
   digital_data: unknown;
