@@ -39,11 +39,34 @@ import {
 const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { plan, planName, isPremium, isTrialing, trialDaysLeft } = useSubscription();
   const navigate = useNavigate();
   
   const [notifications, setNotifications] = useState(true);
   const [emailReminders, setEmailReminders] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoadingPortal, setIsLoadingPortal] = useState(false);
+
+  const handleManageSubscription = async () => {
+    setIsLoadingPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("stripe-portal", {
+        body: { return_url: window.location.origin },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ouvrir le portail de gestion.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingPortal(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     if (!user) return;
