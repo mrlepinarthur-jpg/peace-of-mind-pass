@@ -5,6 +5,7 @@ import {
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
 import PricingCard from "@/components/PricingCard";
+import Footer from "@/components/Footer";
 
 interface HomeProps {
   onGetStarted: () => void;
@@ -132,6 +133,8 @@ const Home = ({ onGetStarted }: HomeProps) => {
           ))}
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };

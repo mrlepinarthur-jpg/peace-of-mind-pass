@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import {
@@ -31,16 +32,41 @@ import {
   Download,
   Info,
   ExternalLink,
+  CreditCard,
+  Crown,
 } from "lucide-react";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { plan, planName, isPremium, isTrialing, trialDaysLeft } = useSubscription();
   const navigate = useNavigate();
   
   const [notifications, setNotifications] = useState(true);
   const [emailReminders, setEmailReminders] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoadingPortal, setIsLoadingPortal] = useState(false);
+
+  const handleManageSubscription = async () => {
+    setIsLoadingPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("stripe-portal", {
+        body: { return_url: window.location.origin },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ouvrir le portail de gestion.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingPortal(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     if (!user) return;
@@ -125,6 +151,53 @@ const Settings = () => {
           Personnalisez votre expérience
         </p>
       </div>
+
+      {/* Mon abonnement */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Crown className="w-5 h-5" />
+            Mon abonnement
+          </CardTitle>
+          <CardDescription>
+            Gérez votre plan et votre facturation
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Plan actuel</Label>
+              <p className="text-sm font-semibold text-foreground">{planName}</p>
+            </div>
+            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+              isPremium ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+            }`}>
+              {isPremium ? (isTrialing ? `Essai — ${trialDaysLeft}j restants` : "Actif") : "Gratuit"}
+            </span>
+          </div>
+          {isPremium && !isTrialing && (
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={handleManageSubscription}
+              disabled={isLoadingPortal}
+            >
+              <CreditCard className="w-4 h-4" />
+              {isLoadingPortal ? "Chargement..." : "Gérer mon abonnement"}
+            </Button>
+          )}
+          {!isPremium && (
+            <Button
+              variant="hero"
+              className="w-full"
+              onClick={() => navigate("/")}
+            >
+              <Crown className="w-4 h-4" />
+              Passer à Sérénité
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Apparence */}
       <Card>
