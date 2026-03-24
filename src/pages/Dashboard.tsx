@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
   User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck,
   MessageSquare, Shield, Download, Cloud, LucideIcon, Zap,
-  AlertTriangle, Lock, Crown,
+  AlertTriangle, Lock, Crown, Cross,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ const sectionConfig = [
   { key: "trusted_person", icon: Heart, title: "Personne de confiance", description: "Celle qui sera contactée en premier" },
   { key: "contacts", icon: Phone, title: "Contacts essentiels", description: "Famille, médecin, notaire..." },
   { key: "documents", icon: FolderOpen, title: "Documents importants", description: "Où les trouver en cas de besoin" },
+  { key: "health", icon: Cross, title: "Fiche Santé", description: "Informations médicales essentielles", badge: "Urgence" },
   { key: "administrative", icon: Wallet, title: "Situation financière", description: "Banques, assurances, contrats" },
   { key: "digital", icon: Laptop, title: "Environnement numérique", description: "Comptes en ligne (sans mots de passe)" },
   { key: "checklists", icon: ClipboardCheck, title: "Checklists d'urgence", description: "Que faire en cas de..." },
@@ -157,6 +158,7 @@ const Dashboard = () => {
               index={index}
               completed={getSectionCompleted(section.key)}
               locked={isLocked}
+              badge={(section as any).badge}
               onClick={() => handleSectionClick(section.key, section.title, section.icon)}
             />
           );

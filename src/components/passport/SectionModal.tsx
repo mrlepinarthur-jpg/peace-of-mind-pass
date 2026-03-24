@@ -9,6 +9,7 @@ import { IdentityForm } from "./IdentityForm";
 import { TrustedPersonForm } from "./TrustedPersonForm";
 import { ContactsForm } from "./ContactsForm";
 import { DocumentsForm } from "./DocumentsForm";
+import { HealthForm } from "./HealthForm";
 import { AdministrativeForm } from "./AdministrativeForm";
 import { DigitalForm } from "./DigitalForm";
 import { ChecklistsForm } from "./ChecklistsForm";
@@ -58,6 +59,8 @@ export const SectionModal = ({
         return <ContactsForm data={data} onSave={handleSave} />;
       case "documents":
         return <DocumentsForm data={data} onSave={handleSave} />;
+      case "health":
+        return <HealthForm data={data} onSave={handleSave} />;
       case "administrative":
         return <AdministrativeForm data={data} onSave={handleSave} />;
       case "digital":

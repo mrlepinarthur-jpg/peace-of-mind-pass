@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Home, FileText, Settings, User } from "lucide-react";
+import { Home, FileText, Settings, User, ShieldCheck } from "lucide-react";
 
 interface BottomNavProps {
   activeTab: string;
@@ -8,7 +8,8 @@ interface BottomNavProps {
 
 const tabs = [
   { id: "home", icon: Home, label: "Accueil" },
-  { id: "passport", icon: FileText, label: "Mon Passeport" },
+  { id: "passport", icon: FileText, label: "Passeport" },
+  { id: "shared", icon: ShieldCheck, label: "Partagés" },
   { id: "profile", icon: User, label: "Profil" },
   { id: "settings", icon: Settings, label: "Réglages" },
 ];

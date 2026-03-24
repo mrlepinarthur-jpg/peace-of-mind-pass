@@ -8,6 +8,7 @@ interface PassportSectionProps {
   index: number;
   completed?: boolean;
   locked?: boolean;
+  badge?: string;
   onClick?: () => void;
 }
 
@@ -18,6 +19,7 @@ const PassportSection = ({
   index,
   completed = false,
   locked = false,
+  badge,
   onClick,
 }: PassportSectionProps) => {
   return (
@@ -45,6 +47,11 @@ const PassportSection = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold text-foreground truncate">{title}</h3>
+          {badge && !locked && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[10px] font-semibold flex-shrink-0">
+              {badge}
+            </span>
+          )}
           {locked && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-navy/10 text-navy text-[10px] font-semibold flex-shrink-0">
               <Crown className="w-3 h-3" />

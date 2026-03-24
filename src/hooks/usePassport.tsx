@@ -13,6 +13,8 @@ export interface PassportData {
   contacts_completed: boolean;
   documents_data: unknown;
   documents_completed: boolean;
+  health_data: unknown;
+  health_completed: boolean;
   administrative_data: unknown;
   administrative_completed: boolean;
   digital_data: unknown;
@@ -92,13 +94,14 @@ export const usePassport = () => {
   };
 
   const getProgress = () => {
-    if (!passport) return { completed: 0, total: 8 };
+    if (!passport) return { completed: 0, total: 9 };
 
     const sections = [
       passport.identity_completed,
       passport.trusted_person_completed,
       passport.contacts_completed,
       passport.documents_completed,
+      passport.health_completed,
       passport.administrative_completed,
       passport.digital_completed,
       passport.checklists_completed,
@@ -107,7 +110,7 @@ export const usePassport = () => {
 
     return {
       completed: sections.filter(Boolean).length,
-      total: 8,
+      total: 9,
     };
   };
 

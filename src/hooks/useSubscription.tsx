@@ -18,7 +18,7 @@ interface SubscriptionContextType {
   loading: boolean;
 }
 
-const FREE_SECTIONS = ["identity", "contacts", "documents"];
+const FREE_SECTIONS = ["identity", "contacts", "documents", "health"];
 const PREMIUM_SECTIONS = ["trusted_person", "administrative", "digital", "checklists", "personal_message"];
 
 export const isFreeSection = (key: string) => FREE_SECTIONS.includes(key);
