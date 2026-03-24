@@ -9,6 +9,7 @@ import { IdentityForm } from "./IdentityForm";
 import { TrustedPersonForm } from "./TrustedPersonForm";
 import { ContactsForm } from "./ContactsForm";
 import { DocumentsForm } from "./DocumentsForm";
+import { HealthForm } from "./HealthForm";
 import { AdministrativeForm } from "./AdministrativeForm";
 import { DigitalForm } from "./DigitalForm";
 import { ChecklistsForm } from "./ChecklistsForm";
