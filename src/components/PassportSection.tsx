@@ -8,6 +8,7 @@ interface PassportSectionProps {
   index: number;
   completed?: boolean;
   locked?: boolean;
+  badge?: string;
   onClick?: () => void;
 }
 
