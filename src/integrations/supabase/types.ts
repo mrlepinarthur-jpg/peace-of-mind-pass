@@ -78,6 +78,8 @@ export type Database = {
           digital_data: Json | null
           documents_completed: boolean | null
           documents_data: Json | null
+          health_completed: boolean | null
+          health_data: Json | null
           id: string
           identity_completed: boolean | null
           identity_data: Json | null
@@ -100,6 +102,8 @@ export type Database = {
           digital_data?: Json | null
           documents_completed?: boolean | null
           documents_data?: Json | null
+          health_completed?: boolean | null
+          health_data?: Json | null
           id?: string
           identity_completed?: boolean | null
           identity_data?: Json | null
@@ -122,6 +126,8 @@ export type Database = {
           digital_data?: Json | null
           documents_completed?: boolean | null
           documents_data?: Json | null
+          health_completed?: boolean | null
+          health_data?: Json | null
           id?: string
           identity_completed?: boolean | null
           identity_data?: Json | null
