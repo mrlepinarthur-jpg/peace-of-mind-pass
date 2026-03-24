@@ -133,6 +133,8 @@ const Home = ({ onGetStarted }: HomeProps) => {
           ))}
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };

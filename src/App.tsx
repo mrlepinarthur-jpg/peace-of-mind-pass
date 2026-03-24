@@ -12,6 +12,9 @@ import EmergencyAccess from "./pages/EmergencyAccess";
 import EmergencyPassportView from "./pages/EmergencyPassportView";
 import DenyAccess from "./pages/DenyAccess";
 import NotFound from "./pages/NotFound";
+import MentionsLegales from "./pages/MentionsLegales";
+import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
+import CGU from "./pages/CGU";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,9 @@ const App = () => (
               <Route path="/emergency-access" element={<EmergencyAccess />} />
               <Route path="/access/:token" element={<EmergencyPassportView />} />
               <Route path="/deny-access" element={<DenyAccess />} />
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+              <Route path="/cgu" element={<CGU />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
