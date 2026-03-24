@@ -19,6 +19,7 @@ const PassportSection = ({
   index,
   completed = false,
   locked = false,
+  badge,
   onClick,
 }: PassportSectionProps) => {
   return (
