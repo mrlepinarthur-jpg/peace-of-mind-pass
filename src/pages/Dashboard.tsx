@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
   User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck,
   MessageSquare, Shield, Download, Cloud, LucideIcon, Zap,
-  AlertTriangle, Lock, Crown,
+  AlertTriangle, Lock, Crown, Cross,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
