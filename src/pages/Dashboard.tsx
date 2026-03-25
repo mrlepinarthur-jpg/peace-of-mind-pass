@@ -38,7 +38,7 @@ const Dashboard = () => {
   const { passport, loading, getProgress, updateSection } = usePassport();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { isPremium, planName, isTrialing, trialDaysLeft } = useSubscription();
+  const { isPremium, plan, planName, isTrialing, trialDaysLeft } = useSubscription();
   const { completed, total } = getProgress();
   const progress = (completed / total) * 100;
 
