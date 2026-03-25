@@ -194,6 +194,35 @@ const Dashboard = () => {
         </Button>
       </motion.div>
 
+      {/* Sync Button - Family plan only */}
+      {plan === "family" && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }} className="mb-4">
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full h-auto py-3 text-sm font-medium gap-2"
+            onClick={async () => {
+              try {
+                await supabase.functions.invoke("emergency-access", {
+                  body: { action: "sync_family_notification" },
+                });
+                toast({ title: "Synchronisation envoyée", description: "Tous les membres de votre famille ont été notifiés." });
+              } catch {
+                toast({ title: "Erreur", description: "Impossible d'envoyer la notification.", variant: "destructive" });
+              }
+            }}
+          >
+            <Cloud className="w-4 h-4" />
+            Synchroniser avec ma famille
+            {passport?.updated_at && (
+              <span className="text-[10px] text-muted-foreground ml-1">
+                Dernière MAJ : {new Date(passport.updated_at).toLocaleDateString("fr-FR")}
+              </span>
+            )}
+          </Button>
+        </motion.div>
+      )}
+
       {/* Actions */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="grid grid-cols-2 gap-3">
         <Button variant="outline" className="h-auto py-4 flex-col gap-2 relative" onClick={handleDownloadPDF}>
