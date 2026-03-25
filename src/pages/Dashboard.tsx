@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscription, isPremiumSection } from "@/hooks/useSubscription";
 import { SectionModal } from "@/components/passport/SectionModal";
 import { generatePassportPDF, generateFreePDF } from "@/utils/generatePassportPDF";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
