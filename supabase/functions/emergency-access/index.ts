@@ -578,6 +578,76 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ACTION 8: Send family invitation email
+    if (action === "send_family_invite") {
+      const { memberEmail, memberName, ownerName } = params;
+      await sendEmail(
+        memberEmail,
+        "📩 Invitation — Passeport de Vie",
+        `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:30px">
+          <h2 style="color:#1a1a2e">Passeport de Vie — Invitation</h2>
+          <p>Bonjour <strong>${memberName}</strong>,</p>
+          <p><strong>${ownerName}</strong> vous a invité(e) à accéder à son Passeport de Vie en tant que membre famille.</p>
+          <p>Créez votre compte sur Passeport de Vie pour accéder aux informations partagées avec vous.</p>
+          <p style="color:#666;font-size:14px;margin-top:20px">Cet accès est en lecture seule et sécurisé.</p>
+        </div>`
+      );
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ACTION 9: Sync family notification
+    if (action === "sync_family_notification") {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: "Non authentifié" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Non authentifié" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("user_id", user.id)
+        .single();
+
+      const { data: members } = await supabase
+        .from("family_members")
+        .select("member_email, member_name")
+        .eq("owner_user_id", user.id);
+
+      if (members && members.length > 0) {
+        const ownerName = profile?.full_name || "Le titulaire";
+        for (const member of members) {
+          await sendEmail(
+            member.member_email,
+            "🔄 Passeport mis à jour — Passeport de Vie",
+            `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:30px">
+              <h2 style="color:#1a1a2e">Passeport de Vie — Mise à jour</h2>
+              <p>Bonjour <strong>${member.member_name}</strong>,</p>
+              <p>Le passeport de <strong>${ownerName}</strong> a été mis à jour.</p>
+              <p>Connectez-vous à l'application pour consulter les dernières informations.</p>
+            </div>`
+          );
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Action inconnue" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
