@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import {
   User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck,
   MessageSquare, Shield, Download, Cloud, LucideIcon, Zap,
-  AlertTriangle, Lock, Crown, Cross,
+  AlertTriangle, Lock, Crown, Cross, ShieldCheck, Scale, KeyRound,
+  HeartHandshake, PawPrint,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,11 @@ const sectionConfig = [
   { key: "digital", icon: Laptop, title: "Environnement numérique", description: "Comptes en ligne (sans mots de passe)" },
   { key: "checklists", icon: ClipboardCheck, title: "Checklists d'urgence", description: "Que faire en cas de..." },
   { key: "personal_message", icon: MessageSquare, title: "Message personnel", description: "Mots pour vos proches (optionnel)" },
+  { key: "insurance", icon: ShieldCheck, title: "Assurances et prévoyance", description: "Contrats, mutuelles, bénéficiaires" },
+  { key: "legal_docs", icon: Scale, title: "Documents juridiques", description: "Testament, donations, notaire" },
+  { key: "digital_access", icon: KeyRound, title: "Accès numériques", description: "Liste des comptes (sans mots de passe)" },
+  { key: "personal_wishes", icon: HeartHandshake, title: "Volontés personnelles", description: "Instructions obsèques et dernières volontés" },
+  { key: "pets", icon: PawPrint, title: "Animaux", description: "Vos compagnons et leur prise en charge" },
 ];
 
 const Dashboard = () => {
