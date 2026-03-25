@@ -231,6 +231,103 @@ const addHealth = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => 
   }
 };
 
+const addInsurance = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => {
+  const data = passport.insurance_data as Record<string, unknown> | null;
+  if (data && passport.insurance_completed) {
+    pdf.addSection("10. Assurances et Prévoyance", () => {
+      const contracts = data.contracts as Array<Record<string, string>> | undefined;
+      if (contracts) {
+        contracts.forEach((c, i) => {
+          if (c.company) {
+            pdf.checkPageBreak(25);
+            pdf.addField(`Contrat ${i + 1}`, `${c.type} — ${c.company}`);
+            pdf.addField("N° contrat", c.contractNumber);
+            if (c.beneficiaries) pdf.addField("Bénéficiaires", c.beneficiaries);
+            if (c.expiry) pdf.addField("Échéance", c.expiry);
+          }
+        });
+      }
+      pdf.addField("Mutuelle", data.mutuelleCompany as string);
+      pdf.addField("N° mutuelle", data.mutuelleNumber as string);
+      pdf.addField("Carte mutuelle", data.mutuelleCardLocation as string);
+    });
+  }
+};
+
+const addLegalDocs = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => {
+  const data = passport.legal_docs_data as Record<string, unknown> | null;
+  if (data && passport.legal_docs_completed) {
+    pdf.addSection("11. Documents Juridiques", () => {
+      pdf.addField("Testament", data.hasTestament === "yes" ? `Oui — ${data.testamentLocation || ""}` : "Non");
+      pdf.addField("Contrat de mariage", data.hasMarriageContract === "yes" ? `Oui — ${data.marriageContractType || ""}` : "Non");
+      pdf.addField("Notaire", data.notaryName as string);
+      pdf.addField("Adresse notaire", data.notaryAddress as string);
+      pdf.addField("Tél. notaire", data.notaryPhone as string);
+      const donations = data.donations as Array<Record<string, string>> | undefined;
+      if (donations) {
+        donations.forEach((d, i) => {
+          if (d.description) pdf.addField(`Donation ${i + 1}`, `${d.description} — ${d.beneficiary} (${d.date})`);
+        });
+      }
+    });
+  }
+};
+
+const addDigitalAccess = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => {
+  const data = passport.digital_access_data as Record<string, unknown> | null;
+  if (data && passport.digital_access_completed) {
+    pdf.addSection("12. Accès Numériques", () => {
+      const accounts = data.accounts as Array<Record<string, string>> | undefined;
+      if (accounts) {
+        accounts.forEach((a, i) => {
+          if (a.service) pdf.addField(`Compte ${i + 1}`, `${a.type} — ${a.service} (${a.email})`);
+        });
+      }
+    });
+  }
+};
+
+const addPersonalWishes = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => {
+  const data = passport.personal_wishes_data as Record<string, unknown> | null;
+  if (data && passport.personal_wishes_completed) {
+    pdf.addSection("13. Volontés Personnelles", () => {
+      const funeralLabels: Record<string, string> = { inhumation: "Inhumation", cremation: "Crémation", no_preference: "Sans préférence" };
+      const ceremonyLabels: Record<string, string> = { religious: "Religieuse", civil: "Civile", none: "Aucune" };
+      pdf.addField("Obsèques", funeralLabels[data.funeralType as string] || "");
+      pdf.addField("Cérémonie", ceremonyLabels[data.ceremonyType as string] || "");
+      pdf.addField("Musique", data.music as string);
+      pdf.addField("Lieu", data.location as string);
+      pdf.addField("Choix particuliers", data.specialWishes as string);
+      const contacts = data.priorityContacts as string[] | undefined;
+      if (contacts) {
+        contacts.forEach((c, i) => {
+          if (c.trim()) pdf.addField(`Personne prioritaire ${i + 1}`, c);
+        });
+      }
+    });
+  }
+};
+
+const addPets = (pdf: ReturnType<typeof setupDoc>, passport: PassportData) => {
+  const data = passport.pets_data as Record<string, unknown> | null;
+  if (data && passport.pets_completed) {
+    pdf.addSection("14. Animaux", () => {
+      const pets = data.pets as Array<Record<string, string>> | undefined;
+      if (pets) {
+        pets.forEach((p, i) => {
+          if (p.name) {
+            pdf.checkPageBreak(30);
+            pdf.addField(`Animal ${i + 1}`, `${p.name} (${p.species} — ${p.breed})`);
+            pdf.addField("Vétérinaire", `${p.vetName} (${p.vetPhone})`);
+            pdf.addField("Personne désignée", p.caretaker);
+            if (p.medicalInfo) pdf.addField("Info médicales", p.medicalInfo);
+          }
+        });
+      }
+    });
+  }
+};
+
 export const generatePassportPDF = (passport: PassportData) => {
   const pdf = setupDoc();
   pdf.addHeader();
@@ -243,6 +340,11 @@ export const generatePassportPDF = (passport: PassportData) => {
   addDigital(pdf, passport);
   addChecklists(pdf, passport);
   addPersonalMessage(pdf, passport);
+  addInsurance(pdf, passport);
+  addLegalDocs(pdf, passport);
+  addDigitalAccess(pdf, passport);
+  addPersonalWishes(pdf, passport);
+  addPets(pdf, passport);
   pdf.addFooter();
   pdf.doc.save("mon-passeport-de-vie.pdf");
 };

@@ -65,6 +65,48 @@ export type Database = {
         }
         Relationships: []
       }
+      family_members: {
+        Row: {
+          created_at: string
+          id: string
+          invited_at: string
+          joined_at: string | null
+          member_email: string
+          member_name: string
+          member_user_id: string | null
+          owner_user_id: string
+          status: string
+          updated_at: string
+          visible_sections: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_at?: string
+          joined_at?: string | null
+          member_email: string
+          member_name: string
+          member_user_id?: string | null
+          owner_user_id: string
+          status?: string
+          updated_at?: string
+          visible_sections?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_at?: string
+          joined_at?: string | null
+          member_email?: string
+          member_name?: string
+          member_user_id?: string | null
+          owner_user_id?: string
+          status?: string
+          updated_at?: string
+          visible_sections?: string[] | null
+        }
+        Relationships: []
+      }
       passports: {
         Row: {
           administrative_completed: boolean | null
@@ -74,6 +116,8 @@ export type Database = {
           contacts_completed: boolean | null
           contacts_data: Json | null
           created_at: string
+          digital_access_completed: boolean | null
+          digital_access_data: Json | null
           digital_completed: boolean | null
           digital_data: Json | null
           documents_completed: boolean | null
@@ -83,8 +127,16 @@ export type Database = {
           id: string
           identity_completed: boolean | null
           identity_data: Json | null
+          insurance_completed: boolean | null
+          insurance_data: Json | null
+          legal_docs_completed: boolean | null
+          legal_docs_data: Json | null
           personal_message_completed: boolean | null
           personal_message_data: Json | null
+          personal_wishes_completed: boolean | null
+          personal_wishes_data: Json | null
+          pets_completed: boolean | null
+          pets_data: Json | null
           trusted_person_completed: boolean | null
           trusted_person_data: Json | null
           updated_at: string
@@ -98,6 +150,8 @@ export type Database = {
           contacts_completed?: boolean | null
           contacts_data?: Json | null
           created_at?: string
+          digital_access_completed?: boolean | null
+          digital_access_data?: Json | null
           digital_completed?: boolean | null
           digital_data?: Json | null
           documents_completed?: boolean | null
@@ -107,8 +161,16 @@ export type Database = {
           id?: string
           identity_completed?: boolean | null
           identity_data?: Json | null
+          insurance_completed?: boolean | null
+          insurance_data?: Json | null
+          legal_docs_completed?: boolean | null
+          legal_docs_data?: Json | null
           personal_message_completed?: boolean | null
           personal_message_data?: Json | null
+          personal_wishes_completed?: boolean | null
+          personal_wishes_data?: Json | null
+          pets_completed?: boolean | null
+          pets_data?: Json | null
           trusted_person_completed?: boolean | null
           trusted_person_data?: Json | null
           updated_at?: string
@@ -122,6 +184,8 @@ export type Database = {
           contacts_completed?: boolean | null
           contacts_data?: Json | null
           created_at?: string
+          digital_access_completed?: boolean | null
+          digital_access_data?: Json | null
           digital_completed?: boolean | null
           digital_data?: Json | null
           documents_completed?: boolean | null
@@ -131,8 +195,16 @@ export type Database = {
           id?: string
           identity_completed?: boolean | null
           identity_data?: Json | null
+          insurance_completed?: boolean | null
+          insurance_data?: Json | null
+          legal_docs_completed?: boolean | null
+          legal_docs_data?: Json | null
           personal_message_completed?: boolean | null
           personal_message_data?: Json | null
+          personal_wishes_completed?: boolean | null
+          personal_wishes_data?: Json | null
+          pets_completed?: boolean | null
+          pets_data?: Json | null
           trusted_person_completed?: boolean | null
           trusted_person_data?: Json | null
           updated_at?: string
@@ -162,6 +234,33 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reminder_preferences: {
+        Row: {
+          created_at: string
+          frequency: string
+          id: string
+          last_reminder_sent_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          last_reminder_sent_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          last_reminder_sent_at?: string | null
           updated_at?: string
           user_id?: string
         }

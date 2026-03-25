@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import {
   User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck,
   MessageSquare, Shield, Download, Cloud, LucideIcon, Zap,
-  AlertTriangle, Lock, Crown, Cross,
+  AlertTriangle, Lock, Crown, Cross, ShieldCheck, Scale, KeyRound,
+  HeartHandshake, PawPrint,
 } from "lucide-react";
 import PassportSection from "@/components/PassportSection";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscription, isPremiumSection } from "@/hooks/useSubscription";
 import { SectionModal } from "@/components/passport/SectionModal";
 import { generatePassportPDF, generateFreePDF } from "@/utils/generatePassportPDF";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
@@ -26,13 +28,18 @@ const sectionConfig = [
   { key: "digital", icon: Laptop, title: "Environnement numérique", description: "Comptes en ligne (sans mots de passe)" },
   { key: "checklists", icon: ClipboardCheck, title: "Checklists d'urgence", description: "Que faire en cas de..." },
   { key: "personal_message", icon: MessageSquare, title: "Message personnel", description: "Mots pour vos proches (optionnel)" },
+  { key: "insurance", icon: ShieldCheck, title: "Assurances et prévoyance", description: "Contrats, mutuelles, bénéficiaires" },
+  { key: "legal_docs", icon: Scale, title: "Documents juridiques", description: "Testament, donations, notaire" },
+  { key: "digital_access", icon: KeyRound, title: "Accès numériques", description: "Liste des comptes (sans mots de passe)" },
+  { key: "personal_wishes", icon: HeartHandshake, title: "Volontés personnelles", description: "Instructions obsèques et dernières volontés" },
+  { key: "pets", icon: PawPrint, title: "Animaux", description: "Vos compagnons et leur prise en charge" },
 ];
 
 const Dashboard = () => {
   const { passport, loading, getProgress, updateSection } = usePassport();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { isPremium, planName, isTrialing, trialDaysLeft } = useSubscription();
+  const { isPremium, plan, planName, isTrialing, trialDaysLeft } = useSubscription();
   const { completed, total } = getProgress();
   const progress = (completed / total) * 100;
 
@@ -187,6 +194,35 @@ const Dashboard = () => {
           {isPremium ? "Activer mon Passeport d'Urgence" : "Passeport d'Urgence (Premium)"}
         </Button>
       </motion.div>
+
+      {/* Sync Button - Family plan only */}
+      {plan === "family" && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }} className="mb-4">
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full h-auto py-3 text-sm font-medium gap-2"
+            onClick={async () => {
+              try {
+                await supabase.functions.invoke("emergency-access", {
+                  body: { action: "sync_family_notification" },
+                });
+                toast({ title: "Synchronisation envoyée", description: "Tous les membres de votre famille ont été notifiés." });
+              } catch {
+                toast({ title: "Erreur", description: "Impossible d'envoyer la notification.", variant: "destructive" });
+              }
+            }}
+          >
+            <Cloud className="w-4 h-4" />
+            Synchroniser avec ma famille
+            {passport?.updated_at && (
+              <span className="text-[10px] text-muted-foreground ml-1">
+                Dernière MAJ : {new Date(passport.updated_at).toLocaleDateString("fr-FR")}
+              </span>
+            )}
+          </Button>
+        </motion.div>
+      )}
 
       {/* Actions */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="grid grid-cols-2 gap-3">

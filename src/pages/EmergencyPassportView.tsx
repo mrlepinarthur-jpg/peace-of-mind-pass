@@ -21,6 +21,11 @@ const sectionConfig = [
   { key: "digital", icon: Laptop, title: "Environnement numérique" },
   { key: "checklists", icon: ClipboardCheck, title: "Checklists d'urgence" },
   { key: "personal_message", icon: MessageSquare, title: "Message personnel" },
+  { key: "insurance", icon: Shield, title: "Assurances et prévoyance" },
+  { key: "legal_docs", icon: FolderOpen, title: "Documents juridiques" },
+  { key: "digital_access", icon: Laptop, title: "Accès numériques" },
+  { key: "personal_wishes", icon: Heart, title: "Volontés personnelles" },
+  { key: "pets", icon: User, title: "Animaux" },
 ];
 
 const EmergencyPassportView = () => {

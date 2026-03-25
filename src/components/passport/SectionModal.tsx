@@ -14,6 +14,11 @@ import { AdministrativeForm } from "./AdministrativeForm";
 import { DigitalForm } from "./DigitalForm";
 import { ChecklistsForm } from "./ChecklistsForm";
 import { PersonalMessageForm } from "./PersonalMessageForm";
+import { InsuranceForm } from "./InsuranceForm";
+import { LegalDocsForm } from "./LegalDocsForm";
+import { DigitalAccessForm } from "./DigitalAccessForm";
+import { PersonalWishesForm } from "./PersonalWishesForm";
+import { PetsForm } from "./PetsForm";
 import { PassportData } from "@/hooks/usePassport";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -69,6 +74,16 @@ export const SectionModal = ({
         return <ChecklistsForm data={data} onSave={handleSave} />;
       case "personal_message":
         return <PersonalMessageForm data={data} onSave={handleSave} />;
+      case "insurance":
+        return <InsuranceForm data={data} onSave={handleSave} />;
+      case "legal_docs":
+        return <LegalDocsForm data={data} onSave={handleSave} />;
+      case "digital_access":
+        return <DigitalAccessForm data={data} onSave={handleSave} />;
+      case "personal_wishes":
+        return <PersonalWishesForm data={data} onSave={handleSave} />;
+      case "pets":
+        return <PetsForm data={data} onSave={handleSave} />;
       default:
         return <div>Section non trouvée</div>;
     }

@@ -22,19 +22,11 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import {
-  Sun,
-  Moon,
-  Bell,
-  BellOff,
-  Shield,
-  FileText,
-  Trash2,
-  Download,
-  Info,
-  ExternalLink,
-  CreditCard,
-  Crown,
+  Sun, Moon, Bell, BellOff, Shield, FileText, Trash2, Download,
+  Info, ExternalLink, CreditCard, Crown,
 } from "lucide-react";
+import { FamilyMembersCard } from "@/components/settings/FamilyMembersCard";
+import { ReminderPreferencesCard } from "@/components/settings/ReminderPreferencesCard";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -198,6 +190,12 @@ const Settings = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Family members - Family plan only */}
+      {plan === "family" && <FamilyMembersCard />}
+
+      {/* Reminder Preferences */}
+      <ReminderPreferencesCard />
 
       {/* Apparence */}
       <Card>
