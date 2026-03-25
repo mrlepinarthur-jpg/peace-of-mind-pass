@@ -44,8 +44,9 @@ export const InsuranceForm = ({ data, onSave }: InsuranceFormProps) => {
   };
 
   const handleSubmit = () => {
-    const formData = { contracts, ...mutuelle, mutuelleCompany: mutuelle.company, mutuelleNumber: mutuelle.number, mutuelleCardLocation: mutuelle.cardLocation };
-    const hasData = contracts.some(c => c.company.trim()) || mutuelle.company.trim();
+    const formData = { contracts, mutuelleCompany: mutuelle.company, mutuelleNumber: mutuelle.number, mutuelleCardLocation: mutuelle.cardLocation };
+    const hasData = contracts.some(c => c.company.trim() !== "") || mutuelle.company.trim() !== "";
+    onSave(formData, Boolean(hasData));
     onSave(formData, hasData);
   };
 

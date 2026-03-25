@@ -37,9 +37,9 @@ export const DigitalAccessForm = ({ data, onSave }: DigitalAccessFormProps) => {
 
   return (
     <div className="space-y-6 py-4">
-      <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl text-sm">
-        <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-        <p className="text-amber-800 dark:text-amber-200">
+      <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-xl text-sm">
+        <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+        <p className="text-foreground">
           <strong>Sécurité :</strong> Ne renseignez jamais vos mots de passe ici. Indiquez uniquement le nom du service et l'email associé.
         </p>
       </div>
