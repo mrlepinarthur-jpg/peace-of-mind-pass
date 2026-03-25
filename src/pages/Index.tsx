@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import Footer from "@/components/Footer";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
@@ -79,6 +80,7 @@ const Index = () => {
         </AnimatePresence>
       </main>
 
+      <Footer />
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );

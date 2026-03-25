@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck, MessageSquare, AlertTriangle, Clock } from "lucide-react";
+import { Shield, User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck, MessageSquare, AlertTriangle, Clock, Cross } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PassportViewData {
@@ -15,6 +15,7 @@ const sectionConfig = [
   { key: "trusted_person", icon: Heart, title: "Personne de confiance" },
   { key: "contacts", icon: Phone, title: "Contacts essentiels" },
   { key: "documents", icon: FolderOpen, title: "Documents importants" },
+  { key: "health", icon: Cross, title: "Fiche Santé" },
   { key: "administrative", icon: Wallet, title: "Situation financière" },
   { key: "digital", icon: Laptop, title: "Environnement numérique" },
   { key: "checklists", icon: ClipboardCheck, title: "Checklists d'urgence" },
@@ -71,6 +72,8 @@ const EmergencyPassportView = () => {
 
   const passport = data.passport;
   const expiresAt = new Date(data.expiresAt);
+  const healthData = passport.health_data as Record<string, unknown> | null;
+  const healthCompleted = passport.health_completed as boolean;
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,6 +94,50 @@ const EmergencyPassportView = () => {
             </h1>
           </div>
 
+          {/* Emergency Medical Info Banner */}
+          {healthCompleted && healthData && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-destructive/10 border-2 border-destructive rounded-xl p-5 mb-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-destructive rounded-lg flex items-center justify-center">
+                  <Cross className="w-5 h-5 text-destructive-foreground" />
+                </div>
+                <h2 className="font-bold text-lg text-destructive">Informations médicales d'urgence</h2>
+              </div>
+
+              <div className="grid gap-3">
+                {healthData.bloodType && (
+                  <div className="flex justify-between items-center py-2 border-b border-destructive/20">
+                    <span className="text-sm font-medium text-foreground">Groupe sanguin</span>
+                    <span className="text-lg font-bold text-destructive">{String(healthData.bloodType)}</span>
+                  </div>
+                )}
+                {healthData.allergies && String(healthData.allergies).trim() && (
+                  <div className="py-2 border-b border-destructive/20">
+                    <p className="text-sm font-medium text-foreground mb-1">Allergies</p>
+                    <p className="text-sm text-destructive font-semibold">{String(healthData.allergies)}</p>
+                  </div>
+                )}
+                {Array.isArray(healthData.treatments) && (healthData.treatments as Array<Record<string, string>>).length > 0 && (
+                  <div className="py-2">
+                    <p className="text-sm font-medium text-foreground mb-2">Traitements en cours</p>
+                    {(healthData.treatments as Array<Record<string, string>>).map((t, i) => (
+                      <div key={i} className="ml-2 text-sm text-foreground mb-1">
+                        <span className="font-semibold">{t.medication}</span>
+                        {t.dosage && <span> — {t.dosage}</span>}
+                        {t.frequency && <span> ({t.frequency})</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* All sections */}
           <div className="space-y-4">
             {sectionConfig.map((section) => {
               const sectionData = passport[`${section.key}_data`] as Record<string, unknown> | null;
@@ -98,6 +145,9 @@ const EmergencyPassportView = () => {
               const Icon = section.icon;
 
               if (!completed || !sectionData) return null;
+
+              // Skip health here since it's shown in the emergency banner above
+              if (section.key === "health") return null;
 
               return (
                 <motion.div
