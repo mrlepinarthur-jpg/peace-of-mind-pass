@@ -89,6 +89,12 @@ const EmergencyPassportView = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 max-w-2xl">
+        <div className="mb-4">
+          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground" onClick={() => navigate("/")}>
+            <ArrowLeft className="w-4 h-4" />
+            Retour
+          </Button>
+        </div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground">
