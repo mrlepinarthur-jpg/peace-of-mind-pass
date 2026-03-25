@@ -35,7 +35,7 @@ const pricingPlans = [
     period: "mois",
     description: "La solution complète pour une tranquillité d'esprit totale.",
     features: [
-      "Toutes les 8 sections du passeport",
+      "Toutes les 14 sections du passeport",
       "Coffre-fort numérique sécurisé",
       "Accès personne de confiance",
       "Export PDF complet",
@@ -53,8 +53,8 @@ const pricingPlans = [
     description: "Protégez toute votre famille avec un seul abonnement.",
     features: [
       "Jusqu'à 5 profils",
-      "Assistance humaine dédiée",
-      "Version imprimée envoyée",
+      "Synchronisation famille en temps réel",
+      "Gestion des membres par email",
       "Support prioritaire 7j/7",
     ],
     variant: "family" as const,
