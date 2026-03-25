@@ -25,6 +25,7 @@ const sectionConfig = [
 
 const EmergencyPassportView = () => {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
   const [data, setData] = useState<PassportViewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
