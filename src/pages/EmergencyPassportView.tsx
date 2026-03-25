@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck, MessageSquare, AlertTriangle, Clock, Cross } from "lucide-react";
+import { Shield, User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck, MessageSquare, AlertTriangle, Clock, Cross, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PassportViewData {
