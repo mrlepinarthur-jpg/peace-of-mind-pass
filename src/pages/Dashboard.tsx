@@ -200,9 +200,9 @@ const Dashboard = () => {
             </span>
           )}
         </Button>
-        <Button variant="sage" className="h-auto py-4 flex-col gap-2">
-          <Shield className="w-5 h-5" />
-          <span className="text-xs">Sécuriser</span>
+        <Button variant="sage" className="h-auto py-4 flex-col gap-2" onClick={() => handleSectionClick("trusted_person", "Personne de confiance", Heart)}>
+          <Heart className="w-5 h-5" />
+          <span className="text-xs">Partager mon passeport</span>
         </Button>
       </motion.div>
 
