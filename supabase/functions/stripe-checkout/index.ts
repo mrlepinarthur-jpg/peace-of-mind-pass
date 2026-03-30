@@ -55,6 +55,7 @@ Deno.serve(async (req) => {
 
     // Resolve price ID from secret names
     const priceMap: Record<string, string | undefined> = {
+      solo: Deno.env.get("STRIPE_PRICE_SOLO"),
       serenity: Deno.env.get("STRIPE_PRICE_SERENITY"),
       family: Deno.env.get("STRIPE_PRICE_FAMILY"),
     };

@@ -13,14 +13,15 @@ interface PricingCardProps {
   period?: string;
   description: string;
   features: string[];
-  variant: "free" | "serenity" | "family";
+  variant: "free" | "solo" | "serenity" | "family";
   popular?: boolean;
+  isNew?: boolean;
   trialDays?: number;
   index: number;
 }
 
 const PricingCard = ({
-  name, price, period, description, features, variant, popular, trialDays, index,
+  name, price, period, description, features, variant, popular, isNew, trialDays, index,
 }: PricingCardProps) => {
   const { plan, setPlan } = useSubscription();
   const { user } = useAuth();
@@ -31,6 +32,7 @@ const PricingCard = ({
 
   const variantStyles = {
     free: { badge: "bg-sage-light text-sage", button: "outline" as const, border: "border-border" },
+    solo: { badge: "bg-primary/10 text-primary", button: "default" as const, border: "border-primary/20" },
     serenity: { badge: "bg-navy text-primary-foreground", button: "hero" as const, border: "border-navy/20" },
     family: { badge: "bg-gold-light text-accent-foreground", button: "gold" as const, border: "border-gold/20" },
   };
@@ -77,6 +79,14 @@ const PricingCard = ({
         popular ? "ring-2 ring-navy" : ""
       } ${isCurrentPlan ? "ring-2 ring-sage" : ""}`}
     >
+      {isNew && !isCurrentPlan && !popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+            Nouveau
+          </span>
+        </div>
+      )}
+
       {popular && !isCurrentPlan && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="bg-navy text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
