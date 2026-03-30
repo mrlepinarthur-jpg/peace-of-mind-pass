@@ -93,28 +93,6 @@ export const DocumentsForm = ({ data, onSave }: DocumentsFormProps) => {
         />
       </div>
 
-      <div className="p-4 bg-muted/30 rounded-xl space-y-3">
-        <h4 className="font-medium text-sm">Coffre-fort</h4>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs">Emplacement</Label>
-            <Input
-              value={formData.safeLocation}
-              onChange={(e) => handleChange("safeLocation", e.target.value)}
-              placeholder="Chambre, placard"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs">Code/Clé</Label>
-            <Input
-              value={formData.safeCode}
-              onChange={(e) => handleChange("safeCode", e.target.value)}
-              placeholder="Code ou emplacement clé"
-            />
-          </div>
-        </div>
-      </div>
-
       <div className="space-y-2">
         <Label htmlFor="otherDocuments">Autres documents importants</Label>
         <Textarea

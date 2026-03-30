@@ -67,7 +67,7 @@ const pricingPlans = [
     description: "Protégez toute votre famille avec un seul abonnement.",
     features: [
       "Tout le plan Sérénité inclus",
-      "Jusqu'à 5 profils",
+      "Jusqu'à 5 profils interconnectés",
       "Synchronisation famille en temps réel",
       "Gestion des membres par email",
       "Support prioritaire 7j/7",
