@@ -147,25 +147,14 @@ export const AdministrativeForm = ({ data, onSave }: AdministrativeFormProps) =>
 
       <div className="space-y-4">
         <h4 className="font-medium">Informations administratives</h4>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="taxNumber">N° fiscal</Label>
-            <Input
-              id="taxNumber"
-              value={formData.taxNumber}
-              onChange={(e) => handleChange("taxNumber", e.target.value)}
-              placeholder="12 34 567 890 123"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="socialSecurityNumber">N° sécurité sociale</Label>
-            <Input
-              id="socialSecurityNumber"
-              value={formData.socialSecurityNumber}
-              onChange={(e) => handleChange("socialSecurityNumber", e.target.value)}
-              placeholder="1 23 45 67 890 123 45"
-            />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="taxNumber">N° fiscal</Label>
+          <Input
+            id="taxNumber"
+            value={formData.taxNumber}
+            onChange={(e) => handleChange("taxNumber", e.target.value)}
+            placeholder="12 34 567 890 123"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">

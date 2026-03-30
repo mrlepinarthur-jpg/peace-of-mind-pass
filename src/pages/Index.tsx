@@ -64,7 +64,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header user={user} />
+      <Header user={user} onTabChange={setActiveTab} />
       
       <main className="container mx-auto px-4 py-6">
         <AnimatePresence mode="wait">

@@ -35,6 +35,7 @@ export const HealthForm = ({ data, onSave }: HealthFormProps) => {
     medicalHistory: "",
     hasAdvanceDirectives: "no",
     advanceDirectivesLocation: "",
+    organDonor: "unknown",
   });
 
   const [specialists, setSpecialists] = useState<Specialist[]>([{ specialty: "", name: "", phone: "" }]);
@@ -54,6 +55,7 @@ export const HealthForm = ({ data, onSave }: HealthFormProps) => {
         medicalHistory: (d.medicalHistory as string) || "",
         hasAdvanceDirectives: (d.hasAdvanceDirectives as string) || "no",
         advanceDirectivesLocation: (d.advanceDirectivesLocation as string) || "",
+        organDonor: (d.organDonor as string) || "unknown",
       }));
       if (d.specialists && Array.isArray(d.specialists) && d.specialists.length > 0) {
         setSpecialists(d.specialists as Specialist[]);
@@ -234,6 +236,28 @@ export const HealthForm = ({ data, onSave }: HealthFormProps) => {
             placeholder="Où se trouve le document ?"
           />
         )}
+      </div>
+
+      {/* Donneur d'organes */}
+      <div className="space-y-3">
+        <Label className="text-base font-semibold flex items-center gap-2">
+          Donneur d'organes
+          <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full font-medium">Urgence</span>
+        </Label>
+        <RadioGroup value={formData.organDonor} onValueChange={(v) => handleChange("organDonor", v)}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="yes" id="donor-yes" />
+            <Label htmlFor="donor-yes">Oui</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="no" id="donor-no" />
+            <Label htmlFor="donor-no">Non</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="unknown" id="donor-unknown" />
+            <Label htmlFor="donor-unknown">Non renseigné</Label>
+          </div>
+        </RadioGroup>
       </div>
 
       <Button onClick={handleSubmit} className="w-full gap-2" size="lg">

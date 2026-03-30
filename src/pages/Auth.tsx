@@ -48,8 +48,22 @@ const Auth = () => {
           return;
         }
 
+        // Fetch user profile for welcome message
+        const { data: { user: loggedUser } } = await supabase.auth.getUser();
+        let firstName = "";
+        if (loggedUser) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name")
+            .eq("user_id", loggedUser.id)
+            .maybeSingle();
+          if (profile?.full_name) {
+            firstName = profile.full_name.split(" ")[0];
+          }
+        }
+
         toast({
-          title: "Bienvenue !",
+          title: firstName ? `Bon retour, ${firstName} !` : "Bienvenue !",
           description: "Connexion réussie.",
         });
         navigate("/");

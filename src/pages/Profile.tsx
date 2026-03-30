@@ -132,7 +132,9 @@ const Profile = () => {
             {getInitials()}
           </AvatarFallback>
         </Avatar>
-        <h1 className="text-2xl font-bold text-foreground">Mon Profil</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          {fullName.trim() || "Mon Profil"}
+        </h1>
         <p className="text-muted-foreground text-sm mt-1">
           Gérez vos informations personnelles
         </p>

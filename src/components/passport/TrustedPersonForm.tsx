@@ -19,6 +19,8 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     fullName: "",
+    firstName: "",
+    dateOfBirth: "",
     relationship: "",
     phone: "",
     email: "",
@@ -106,6 +108,26 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
           value={formData.fullName}
           onChange={(e) => handleChange("fullName", e.target.value)}
           placeholder="Marie Dupont"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="firstName">Prénom</Label>
+        <Input
+          id="firstName"
+          value={formData.firstName}
+          onChange={(e) => handleChange("firstName", e.target.value)}
+          placeholder="Marie"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="dateOfBirth">Date de naissance</Label>
+        <Input
+          id="dateOfBirth"
+          type="date"
+          value={formData.dateOfBirth}
+          onChange={(e) => handleChange("dateOfBirth", e.target.value)}
         />
       </div>
 

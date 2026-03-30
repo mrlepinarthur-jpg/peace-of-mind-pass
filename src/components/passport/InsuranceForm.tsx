@@ -13,14 +13,13 @@ interface InsuranceContract {
   type: string;
   company: string;
   contractNumber: string;
-  beneficiaries: string;
   expiry: string;
 }
 
 export const InsuranceForm = ({ data, onSave }: InsuranceFormProps) => {
   const [contracts, setContracts] = useState<InsuranceContract[]>(
     (data.contracts as InsuranceContract[]) || [
-      { type: "Assurance-vie", company: "", contractNumber: "", beneficiaries: "", expiry: "" },
+      { type: "Assurance-vie", company: "", contractNumber: "", expiry: "" },
     ]
   );
   const [mutuelle, setMutuelle] = useState({
@@ -30,7 +29,7 @@ export const InsuranceForm = ({ data, onSave }: InsuranceFormProps) => {
   });
 
   const addContract = () => {
-    setContracts([...contracts, { type: "", company: "", contractNumber: "", beneficiaries: "", expiry: "" }]);
+    setContracts([...contracts, { type: "", company: "", contractNumber: "", expiry: "" }]);
   };
 
   const removeContract = (index: number) => {
@@ -77,10 +76,6 @@ export const InsuranceForm = ({ data, onSave }: InsuranceFormProps) => {
             <div>
               <Label>N° de contrat</Label>
               <Input value={contract.contractNumber} onChange={(e) => updateContract(index, "contractNumber", e.target.value)} placeholder="Numéro du contrat" />
-            </div>
-            <div>
-              <Label>Bénéficiaires</Label>
-              <Input value={contract.beneficiaries} onChange={(e) => updateContract(index, "beneficiaries", e.target.value)} placeholder="Noms des bénéficiaires" />
             </div>
             <div>
               <Label>Date d'échéance</Label>
