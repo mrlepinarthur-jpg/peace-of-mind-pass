@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-export type SubscriptionPlan = "free" | "serenity" | "family";
+export type SubscriptionPlan = "free" | "solo" | "serenity" | "family";
 
 interface SubscriptionContextType {
   plan: SubscriptionPlan;
@@ -13,12 +13,15 @@ interface SubscriptionContextType {
   canSendToTrustedPerson: boolean;
   canAccessVault: boolean;
   canAccessHistory: boolean;
+  canAccessEmergency: boolean;
+  canAccessShared: boolean;
   maxProfiles: number;
   planName: string;
   loading: boolean;
 }
 
 const FREE_SECTIONS = ["identity", "contacts", "documents", "health"];
+const SOLO_SECTIONS = [...FREE_SECTIONS, "trusted_person", "administrative", "digital", "checklists", "personal_message", "insurance", "legal_docs", "digital_access", "personal_wishes", "pets"];
 const PREMIUM_SECTIONS = ["trusted_person", "administrative", "digital", "checklists", "personal_message", "insurance", "legal_docs", "digital_access", "personal_wishes", "pets"];
 
 export const isFreeSection = (key: string) => FREE_SECTIONS.includes(key);
@@ -114,10 +117,12 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     setPlanState(newPlan);
   };
 
-  const isPremium = plan === "serenity" || plan === "family";
+  const isPremium = plan === "solo" || plan === "serenity" || plan === "family";
+  const isSerenityPlus = plan === "serenity" || plan === "family";
 
   const planName = {
     free: "Essentiel",
+    solo: "Solo",
     serenity: "Sérénité",
     family: "Famille",
   }[plan];
@@ -130,9 +135,11 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
         isPremium,
         isTrialing,
         trialDaysLeft,
-        canSendToTrustedPerson: isPremium,
+        canSendToTrustedPerson: isSerenityPlus,
         canAccessVault: isPremium,
         canAccessHistory: isPremium,
+        canAccessEmergency: isSerenityPlus,
+        canAccessShared: isSerenityPlus,
         maxProfiles: plan === "family" ? 5 : 1,
         planName,
         loading,
