@@ -267,15 +267,15 @@ const Settings = () => {
         </CardContent>
       </Card>
 
-      {/* Confidentialité et données */}
+      {/* Mes données personnelles */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            Confidentialité et données
+            Mes données personnelles
           </CardTitle>
           <CardDescription>
-            Gérez vos données personnelles
+            Conformément au RGPD, vous pouvez télécharger ou supprimer vos données à tout moment.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -285,7 +285,7 @@ const Settings = () => {
             onClick={handleExportData}
           >
             <Download className="w-4 h-4" />
-            Exporter mes données
+            Télécharger mes données
           </Button>
           
           <AlertDialog>
