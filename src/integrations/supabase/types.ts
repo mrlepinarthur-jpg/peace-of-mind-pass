@@ -217,6 +217,7 @@ export type Database = {
           created_at: string
           email: string | null
           full_name: string | null
+          health_consent_given: boolean | null
           id: string
           updated_at: string
           user_id: string
@@ -225,6 +226,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
+          health_consent_given?: boolean | null
           id?: string
           updated_at?: string
           user_id: string
@@ -233,6 +235,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
+          health_consent_given?: boolean | null
           id?: string
           updated_at?: string
           user_id?: string
