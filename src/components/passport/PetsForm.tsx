@@ -23,7 +23,7 @@ interface Pet {
 
 export const PetsForm = ({ data, onSave }: PetsFormProps) => {
   const [pets, setPets] = useState<Pet[]>(
-    (data.pets as Pet[]) || [{ name: "", species: "", breed: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]
+    (data.pets as Pet[]) || [{ name: "", species: "", breed: "", chipNumber: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]
   );
 
   const addPet = () => setPets([...pets, { name: "", species: "", breed: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]);
