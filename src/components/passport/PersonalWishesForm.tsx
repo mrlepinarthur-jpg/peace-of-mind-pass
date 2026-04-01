@@ -19,6 +19,12 @@ export const PersonalWishesForm = ({ data, onSave }: PersonalWishesFormProps) =>
   const [priorityContacts, setPriorityContacts] = useState<string[]>(
     (data.priorityContacts as string[]) || [""]
   );
+  const [hasFuneralContract, setHasFuneralContract] = useState((data.hasFuneralContract as string) || "no");
+  const [funeralContractCompany, setFuneralContractCompany] = useState((data.funeralContractCompany as string) || "");
+  const [funeralContractNumber, setFuneralContractNumber] = useState((data.funeralContractNumber as string) || "");
+  const [funeralContractLocation, setFuneralContractLocation] = useState((data.funeralContractLocation as string) || "");
+  const [funeralContractAmount, setFuneralContractAmount] = useState((data.funeralContractAmount as string) || "");
+  const [funeralContractPhone, setFuneralContractPhone] = useState((data.funeralContractPhone as string) || "");
 
   const addContact = () => setPriorityContacts([...priorityContacts, ""]);
   const removeContact = (i: number) => setPriorityContacts(priorityContacts.filter((_, idx) => idx !== i));
