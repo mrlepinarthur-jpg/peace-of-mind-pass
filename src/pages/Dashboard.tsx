@@ -49,6 +49,17 @@ const Dashboard = () => {
   } | null>(null);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
   const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
+  const [showHealthConsent, setShowHealthConsent] = useState(false);
+  const [pendingHealthSection, setPendingHealthSection] = useState<{ key: string; title: string; icon: LucideIcon } | null>(null);
+  const [healthConsentGiven, setHealthConsentGiven] = useState<boolean | null>(null);
+
+  // Load health consent status
+  useState(() => {
+    if (user) {
+      supabase.from("profiles").select("health_consent_given").eq("user_id", user.id).maybeSingle()
+        .then(({ data }) => setHealthConsentGiven(data?.health_consent_given ?? false));
+    }
+  });
 
   const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
   const trustedPersonEmail = trustedPersonData?.email;
