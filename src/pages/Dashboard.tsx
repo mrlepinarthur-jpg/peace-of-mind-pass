@@ -53,13 +53,12 @@ const Dashboard = () => {
   const [pendingHealthSection, setPendingHealthSection] = useState<{ key: string; title: string; icon: LucideIcon } | null>(null);
   const [healthConsentGiven, setHealthConsentGiven] = useState<boolean | null>(null);
 
-  // Load health consent status
-  useState(() => {
+  useEffect(() => {
     if (user) {
       supabase.from("profiles").select("health_consent_given").eq("user_id", user.id).maybeSingle()
-        .then(({ data }) => setHealthConsentGiven(data?.health_consent_given ?? false));
+        .then(({ data }) => setHealthConsentGiven((data as any)?.health_consent_given ?? false));
     }
-  });
+  }, [user]);
 
   const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
   const trustedPersonEmail = trustedPersonData?.email;
