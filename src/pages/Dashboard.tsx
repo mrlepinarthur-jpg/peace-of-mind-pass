@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   User, Heart, Phone, FolderOpen, Wallet, Laptop, ClipboardCheck,
@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
+import { HealthConsentDialog } from "@/components/passport/HealthConsentDialog";
 
 const sectionConfig = [
   { key: "identity", icon: User, title: "Mon identité", description: "Informations personnelles de base" },
@@ -48,6 +49,16 @@ const Dashboard = () => {
   } | null>(null);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
   const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
+  const [showHealthConsent, setShowHealthConsent] = useState(false);
+  const [pendingHealthSection, setPendingHealthSection] = useState<{ key: string; title: string; icon: LucideIcon } | null>(null);
+  const [healthConsentGiven, setHealthConsentGiven] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      supabase.from("profiles").select("health_consent_given").eq("user_id", user.id).maybeSingle()
+        .then(({ data }) => setHealthConsentGiven((data as any)?.health_consent_given ?? false));
+    }
+  }, [user]);
 
   const trustedPersonData = passport?.trusted_person_data as Record<string, string> | null;
   const trustedPersonEmail = trustedPersonData?.email;
@@ -68,7 +79,24 @@ const Dashboard = () => {
       });
       return;
     }
+    // Health consent check
+    if (key === "health" && !healthConsentGiven) {
+      setPendingHealthSection({ key, title, icon });
+      setShowHealthConsent(true);
+      return;
+    }
     setSelectedSection({ key, title, icon });
+  };
+
+  const handleHealthConsent = async () => {
+    if (!user) return;
+    await supabase.from("profiles").update({ health_consent_given: true } as any).eq("user_id", user.id);
+    setHealthConsentGiven(true);
+    setShowHealthConsent(false);
+    if (pendingHealthSection) {
+      setSelectedSection(pendingHealthSection);
+      setPendingHealthSection(null);
+    }
   };
 
   const handleSaveSection = async (
@@ -254,6 +282,12 @@ const Dashboard = () => {
       <EmergencyActivationDialog
         isOpen={showEmergencyDialog}
         onClose={() => setShowEmergencyDialog(false)}
+      />
+
+      <HealthConsentDialog
+        isOpen={showHealthConsent}
+        onClose={() => { setShowHealthConsent(false); setPendingHealthSection(null); }}
+        onConsent={handleHealthConsent}
       />
 
       {selectedSection && (
