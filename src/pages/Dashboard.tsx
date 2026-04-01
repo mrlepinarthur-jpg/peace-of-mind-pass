@@ -80,7 +80,24 @@ const Dashboard = () => {
       });
       return;
     }
+    // Health consent check
+    if (key === "health" && !healthConsentGiven) {
+      setPendingHealthSection({ key, title, icon });
+      setShowHealthConsent(true);
+      return;
+    }
     setSelectedSection({ key, title, icon });
+  };
+
+  const handleHealthConsent = async () => {
+    if (!user) return;
+    await supabase.from("profiles").update({ health_consent_given: true } as any).eq("user_id", user.id);
+    setHealthConsentGiven(true);
+    setShowHealthConsent(false);
+    if (pendingHealthSection) {
+      setSelectedSection(pendingHealthSection);
+      setPendingHealthSection(null);
+    }
   };
 
   const handleSaveSection = async (
