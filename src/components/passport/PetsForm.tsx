@@ -14,6 +14,7 @@ interface Pet {
   name: string;
   species: string;
   breed: string;
+  chipNumber: string;
   vetName: string;
   vetPhone: string;
   caretaker: string;
