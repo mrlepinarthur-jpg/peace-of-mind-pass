@@ -19,6 +19,12 @@ export const PersonalWishesForm = ({ data, onSave }: PersonalWishesFormProps) =>
   const [priorityContacts, setPriorityContacts] = useState<string[]>(
     (data.priorityContacts as string[]) || [""]
   );
+  const [hasFuneralContract, setHasFuneralContract] = useState((data.hasFuneralContract as string) || "no");
+  const [funeralContractCompany, setFuneralContractCompany] = useState((data.funeralContractCompany as string) || "");
+  const [funeralContractNumber, setFuneralContractNumber] = useState((data.funeralContractNumber as string) || "");
+  const [funeralContractLocation, setFuneralContractLocation] = useState((data.funeralContractLocation as string) || "");
+  const [funeralContractAmount, setFuneralContractAmount] = useState((data.funeralContractAmount as string) || "");
+  const [funeralContractPhone, setFuneralContractPhone] = useState((data.funeralContractPhone as string) || "");
 
   const addContact = () => setPriorityContacts([...priorityContacts, ""]);
   const removeContact = (i: number) => setPriorityContacts(priorityContacts.filter((_, idx) => idx !== i));
@@ -29,8 +35,12 @@ export const PersonalWishesForm = ({ data, onSave }: PersonalWishesFormProps) =>
   };
 
   const handleSubmit = () => {
-    const formData = { funeralType, ceremonyType, music, location, specialWishes, priorityContacts };
-    const hasData = funeralType !== "" || ceremonyType !== "" || music.trim() !== "";
+    const formData = {
+      funeralType, ceremonyType, music, location, specialWishes, priorityContacts,
+      hasFuneralContract, funeralContractCompany, funeralContractNumber,
+      funeralContractLocation, funeralContractAmount, funeralContractPhone,
+    };
+    const hasData = funeralType !== "" || ceremonyType !== "" || music.trim() !== "" || hasFuneralContract === "yes";
     onSave(formData, hasData);
   };
 
@@ -84,6 +94,41 @@ export const PersonalWishesForm = ({ data, onSave }: PersonalWishesFormProps) =>
         <Button variant="outline" size="sm" onClick={addContact} className="gap-2">
           <Plus className="w-4 h-4" /> Ajouter une personne
         </Button>
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="font-semibold text-foreground">Contrat obsèques</h3>
+        <div>
+          <Label>Contrat obsèques souscrit</Label>
+          <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={hasFuneralContract} onChange={(e) => setHasFuneralContract(e.target.value)}>
+            <option value="no">Non</option>
+            <option value="yes">Oui</option>
+          </select>
+        </div>
+        {hasFuneralContract === "yes" && (
+          <div className="space-y-2 p-3 bg-muted/50 rounded-xl">
+            <div>
+              <Label>Compagnie / Organisme</Label>
+              <Input value={funeralContractCompany} onChange={(e) => setFuneralContractCompany(e.target.value)} placeholder="Nom de la compagnie" />
+            </div>
+            <div>
+              <Label>Numéro de contrat</Label>
+              <Input value={funeralContractNumber} onChange={(e) => setFuneralContractNumber(e.target.value)} placeholder="N° de contrat" />
+            </div>
+            <div>
+              <Label>Lieu de conservation du document</Label>
+              <Input value={funeralContractLocation} onChange={(e) => setFuneralContractLocation(e.target.value)} placeholder="Où est conservé le contrat ?" />
+            </div>
+            <div>
+              <Label>Montant prévu (optionnel)</Label>
+              <Input value={funeralContractAmount} onChange={(e) => setFuneralContractAmount(e.target.value)} placeholder="Ex : 3 500 €" />
+            </div>
+            <div>
+              <Label>Contact de l'organisme (téléphone)</Label>
+              <Input value={funeralContractPhone} onChange={(e) => setFuneralContractPhone(e.target.value)} placeholder="Téléphone" type="tel" />
+            </div>
+          </div>
+        )}
       </div>
 
       <div>

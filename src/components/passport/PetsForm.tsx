@@ -14,6 +14,7 @@ interface Pet {
   name: string;
   species: string;
   breed: string;
+  chipNumber: string;
   vetName: string;
   vetPhone: string;
   caretaker: string;
@@ -22,10 +23,10 @@ interface Pet {
 
 export const PetsForm = ({ data, onSave }: PetsFormProps) => {
   const [pets, setPets] = useState<Pet[]>(
-    (data.pets as Pet[]) || [{ name: "", species: "", breed: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]
+    (data.pets as Pet[]) || [{ name: "", species: "", breed: "", chipNumber: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]
   );
 
-  const addPet = () => setPets([...pets, { name: "", species: "", breed: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]);
+  const addPet = () => setPets([...pets, { name: "", species: "", breed: "", chipNumber: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]);
   const removePet = (i: number) => setPets(pets.filter((_, idx) => idx !== i));
   const updatePet = (i: number, field: keyof Pet, value: string) => {
     const updated = [...pets];
@@ -61,6 +62,10 @@ export const PetsForm = ({ data, onSave }: PetsFormProps) => {
           <div>
             <Label>Race</Label>
             <Input value={pet.breed} onChange={(e) => updatePet(index, "breed", e.target.value)} placeholder="Race de l'animal" />
+          </div>
+          <div>
+            <Label>N° de puce (identification électronique)</Label>
+            <Input value={pet.chipNumber} onChange={(e) => updatePet(index, "chipNumber", e.target.value)} placeholder="Ex : 250XXXXXXXXXXXX" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
