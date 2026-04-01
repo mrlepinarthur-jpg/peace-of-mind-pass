@@ -35,8 +35,12 @@ export const PersonalWishesForm = ({ data, onSave }: PersonalWishesFormProps) =>
   };
 
   const handleSubmit = () => {
-    const formData = { funeralType, ceremonyType, music, location, specialWishes, priorityContacts };
-    const hasData = funeralType !== "" || ceremonyType !== "" || music.trim() !== "";
+    const formData = {
+      funeralType, ceremonyType, music, location, specialWishes, priorityContacts,
+      hasFuneralContract, funeralContractCompany, funeralContractNumber,
+      funeralContractLocation, funeralContractAmount, funeralContractPhone,
+    };
+    const hasData = funeralType !== "" || ceremonyType !== "" || music.trim() !== "" || hasFuneralContract === "yes";
     onSave(formData, hasData);
   };
 
