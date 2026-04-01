@@ -26,7 +26,7 @@ export const PetsForm = ({ data, onSave }: PetsFormProps) => {
     (data.pets as Pet[]) || [{ name: "", species: "", breed: "", chipNumber: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]
   );
 
-  const addPet = () => setPets([...pets, { name: "", species: "", breed: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]);
+  const addPet = () => setPets([...pets, { name: "", species: "", breed: "", chipNumber: "", vetName: "", vetPhone: "", caretaker: "", medicalInfo: "" }]);
   const removePet = (i: number) => setPets(pets.filter((_, idx) => idx !== i));
   const updatePet = (i: number, field: keyof Pet, value: string) => {
     const updated = [...pets];
