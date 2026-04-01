@@ -63,6 +63,10 @@ export const PetsForm = ({ data, onSave }: PetsFormProps) => {
             <Label>Race</Label>
             <Input value={pet.breed} onChange={(e) => updatePet(index, "breed", e.target.value)} placeholder="Race de l'animal" />
           </div>
+          <div>
+            <Label>N° de puce (identification électronique)</Label>
+            <Input value={pet.chipNumber} onChange={(e) => updatePet(index, "chipNumber", e.target.value)} placeholder="Ex : 250XXXXXXXXXXXX" />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Vétérinaire</Label>

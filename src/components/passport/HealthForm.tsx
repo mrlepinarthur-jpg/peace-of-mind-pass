@@ -193,16 +193,6 @@ export const HealthForm = ({ data, onSave }: HealthFormProps) => {
         </Button>
       </div>
 
-      {/* N° sécu */}
-      <div className="space-y-2">
-        <Label htmlFor="socialSecurityNumber">Numéro de sécurité sociale</Label>
-        <Input
-          id="socialSecurityNumber"
-          value={formData.socialSecurityNumber}
-          onChange={(e) => handleChange("socialSecurityNumber", e.target.value)}
-          placeholder="1 XX XX XX XXX XXX XX"
-        />
-      </div>
 
       {/* Antécédents */}
       <div className="space-y-2">
