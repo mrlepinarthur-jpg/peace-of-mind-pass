@@ -317,6 +317,12 @@ const Settings = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          <Separator />
+
+          <p className="text-xs text-muted-foreground text-center pt-1">
+            Pour toute demande RGPD : <a href="mailto:contact@passeportdevie.fr" className="text-primary underline">contact@passeportdevie.fr</a>
+          </p>
         </CardContent>
       </Card>
 

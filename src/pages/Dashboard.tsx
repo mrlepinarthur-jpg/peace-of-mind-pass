@@ -285,6 +285,12 @@ const Dashboard = () => {
         onClose={() => setShowEmergencyDialog(false)}
       />
 
+      <HealthConsentDialog
+        isOpen={showHealthConsent}
+        onClose={() => { setShowHealthConsent(false); setPendingHealthSection(null); }}
+        onConsent={handleHealthConsent}
+      />
+
       {selectedSection && (
         <SectionModal
           isOpen={!!selectedSection}
