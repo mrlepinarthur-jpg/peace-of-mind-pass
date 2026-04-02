@@ -21,6 +21,7 @@ import { PersonalWishesForm } from "./PersonalWishesForm";
 import { PetsForm } from "./PetsForm";
 import { PassportData } from "@/hooks/usePassport";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SecurityBanner } from "./SecurityBanner";
 
 interface SectionModalProps {
   isOpen: boolean;
