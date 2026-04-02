@@ -53,11 +53,18 @@ const Dashboard = () => {
   const [showHealthConsent, setShowHealthConsent] = useState(false);
   const [pendingHealthSection, setPendingHealthSection] = useState<{ key: string; title: string; icon: LucideIcon } | null>(null);
   const [healthConsentGiven, setHealthConsentGiven] = useState<boolean | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
 
   useEffect(() => {
     if (user) {
-      supabase.from("profiles").select("health_consent_given").eq("user_id", user.id).maybeSingle()
-        .then(({ data }) => setHealthConsentGiven((data as any)?.health_consent_given ?? false));
+      supabase.from("profiles").select("health_consent_given, onboarding_completed").eq("user_id", user.id).maybeSingle()
+        .then(({ data }) => {
+          setHealthConsentGiven((data as any)?.health_consent_given ?? false);
+          const done = (data as any)?.onboarding_completed ?? false;
+          setShowOnboarding(!done);
+          setOnboardingChecked(true);
+        });
     }
   }, [user]);
 
