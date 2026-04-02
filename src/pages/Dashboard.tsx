@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
 import { HealthConsentDialog } from "@/components/passport/HealthConsentDialog";
+import OnboardingFlow from "@/components/OnboardingFlow";
 
 const sectionConfig = [
   { key: "identity", icon: User, title: "Mon identité", description: "Informations personnelles de base" },
