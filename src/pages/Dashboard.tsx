@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ActivatePassportDialog } from "@/components/passport/ActivatePassportDialog";
 import { EmergencyActivationDialog } from "@/components/passport/EmergencyActivationDialog";
 import { HealthConsentDialog } from "@/components/passport/HealthConsentDialog";
+import OnboardingFlow from "@/components/OnboardingFlow";
 
 const sectionConfig = [
   { key: "identity", icon: User, title: "Mon identité", description: "Informations personnelles de base" },
@@ -52,11 +53,18 @@ const Dashboard = () => {
   const [showHealthConsent, setShowHealthConsent] = useState(false);
   const [pendingHealthSection, setPendingHealthSection] = useState<{ key: string; title: string; icon: LucideIcon } | null>(null);
   const [healthConsentGiven, setHealthConsentGiven] = useState<boolean | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
 
   useEffect(() => {
     if (user) {
-      supabase.from("profiles").select("health_consent_given").eq("user_id", user.id).maybeSingle()
-        .then(({ data }) => setHealthConsentGiven((data as any)?.health_consent_given ?? false));
+      supabase.from("profiles").select("health_consent_given, onboarding_completed").eq("user_id", user.id).maybeSingle()
+        .then(({ data }) => {
+          setHealthConsentGiven((data as any)?.health_consent_given ?? false);
+          const done = (data as any)?.onboarding_completed ?? false;
+          setShowOnboarding(!done);
+          setOnboardingChecked(true);
+        });
     }
   }, [user]);
 
@@ -123,12 +131,23 @@ const Dashboard = () => {
     toast({ title: "PDF généré", description: isPremium ? "Votre passeport complet a été téléchargé." : "PDF limité aux sections gratuites. Passez à Sérénité pour l'export complet." });
   };
 
-  if (loading) {
+  const handleOnboardingComplete = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
+    }
+    setShowOnboarding(false);
+  };
+
+  if (loading || !onboardingChecked) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
+  }
+
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
 
   return (

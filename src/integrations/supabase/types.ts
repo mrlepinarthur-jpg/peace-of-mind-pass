@@ -219,6 +219,7 @@ export type Database = {
           full_name: string | null
           health_consent_given: boolean | null
           id: string
+          onboarding_completed: boolean | null
           updated_at: string
           user_id: string
         }
@@ -228,6 +229,7 @@ export type Database = {
           full_name?: string | null
           health_consent_given?: boolean | null
           id?: string
+          onboarding_completed?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -237,6 +239,7 @@ export type Database = {
           full_name?: string | null
           health_consent_given?: boolean | null
           id?: string
+          onboarding_completed?: boolean | null
           updated_at?: string
           user_id?: string
         }

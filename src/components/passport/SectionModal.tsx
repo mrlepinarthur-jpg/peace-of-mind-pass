@@ -21,6 +21,7 @@ import { PersonalWishesForm } from "./PersonalWishesForm";
 import { PetsForm } from "./PetsForm";
 import { PassportData } from "@/hooks/usePassport";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SecurityBanner } from "./SecurityBanner";
 
 interface SectionModalProps {
   isOpen: boolean;
@@ -101,6 +102,7 @@ export const SectionModal = ({
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[calc(90vh-100px)] px-6 pb-6">
+          <SecurityBanner sectionKey={sectionKey} isCompleted={Boolean(passport && (passport as any)[`${sectionKey}_completed`])} />
           {renderForm()}
         </ScrollArea>
       </DialogContent>
