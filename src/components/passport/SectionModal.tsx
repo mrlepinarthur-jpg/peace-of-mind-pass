@@ -102,6 +102,7 @@ export const SectionModal = ({
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[calc(90vh-100px)] px-6 pb-6">
+          <SecurityBanner sectionKey={sectionKey} isCompleted={Boolean(passport && (passport as any)[`${sectionKey}_completed`])} />
           {renderForm()}
         </ScrollArea>
       </DialogContent>
