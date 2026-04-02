@@ -131,12 +131,23 @@ const Dashboard = () => {
     toast({ title: "PDF généré", description: isPremium ? "Votre passeport complet a été téléchargé." : "PDF limité aux sections gratuites. Passez à Sérénité pour l'export complet." });
   };
 
-  if (loading) {
+  const handleOnboardingComplete = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
+    }
+    setShowOnboarding(false);
+  };
+
+  if (loading || !onboardingChecked) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
+  }
+
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
 
   return (
