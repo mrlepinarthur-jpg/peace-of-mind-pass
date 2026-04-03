@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Shield, Heart, Clock, CheckCircle, ArrowRight, Sparkles,
@@ -6,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HomeProps {
   onGetStarted: () => void;
@@ -77,8 +80,44 @@ const pricingPlans = [
 ];
 
 const Home = ({ onGetStarted }: HomeProps) => {
+  const { user } = useAuth();
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      supabase
+        .from("profiles")
+        .select("first_name, full_name")
+        .eq("user_id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          const d = data as any;
+          if (d?.first_name) {
+            setFirstName(d.first_name);
+          } else if (d?.full_name) {
+            setFirstName(d.full_name.split(" ")[0] || "");
+          }
+        });
+    } else {
+      setFirstName("");
+    }
+  }, [user]);
+
   return (
     <div className="pb-24">
+      {/* Welcome message for logged-in users */}
+      {user && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4"
+        >
+          <p className="text-lg text-foreground font-medium">
+            Bonjour{firstName ? ` ${firstName}` : ""} 👋
+          </p>
+        </motion.div>
+      )}
+
       {/* Hero Section */}
       <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center mb-10">
         <motion.div

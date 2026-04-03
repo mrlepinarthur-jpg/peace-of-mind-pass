@@ -216,9 +216,11 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          first_name: string | null
           full_name: string | null
           health_consent_given: boolean | null
           id: string
+          last_name: string | null
           onboarding_completed: boolean | null
           updated_at: string
           user_id: string
@@ -226,9 +228,11 @@ export type Database = {
         Insert: {
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string | null
           health_consent_given?: boolean | null
           id?: string
+          last_name?: string | null
           onboarding_completed?: boolean | null
           updated_at?: string
           user_id: string
@@ -236,9 +240,11 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string | null
           health_consent_given?: boolean | null
           id?: string
+          last_name?: string | null
           onboarding_completed?: boolean | null
           updated_at?: string
           user_id?: string

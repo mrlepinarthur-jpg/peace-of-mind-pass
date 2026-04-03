@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
+import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -20,6 +21,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="passeport-theme">
     <AuthProvider>
       <SubscriptionProvider>
         <TooltipProvider>
@@ -43,6 +45,7 @@ const App = () => (
         </TooltipProvider>
       </SubscriptionProvider>
     </AuthProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
