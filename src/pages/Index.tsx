@@ -9,11 +9,14 @@ import Dashboard from "./Dashboard";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import SharedPassports from "./SharedPassports";
+import MyProfiles from "./MyProfiles";
+import ProfilePassport from "./ProfilePassport";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
-  const { user, loading, signOut } = useAuth();
+  const [openedProfileId, setOpenedProfileId] = useState<string | null>(null);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
@@ -24,28 +27,35 @@ const Index = () => {
     }
   };
 
+  const handleTabChange = (tab: string) => {
+    setOpenedProfileId(null);
+    setActiveTab(tab);
+  };
 
   const renderContent = () => {
+    if (openedProfileId) {
+      // ProfilePassport reads :profileId from url, fall back: render directly via prop-style hack
+      return <ProfilePassportInline profileId={openedProfileId} onBack={() => setOpenedProfileId(null)} />;
+    }
     switch (activeTab) {
       case "home":
         return <Home onGetStarted={handleGetStarted} />;
       case "passport":
-        if (!user) {
-          navigate("/auth");
-          return null;
-        }
+        if (!user) { navigate("/auth"); return null; }
         return <Dashboard />;
       case "shared":
-        if (!user) {
-          navigate("/auth");
-          return null;
-        }
+        if (!user) { navigate("/auth"); return null; }
         return <SharedPassports />;
+      case "my_profiles":
+        if (!user) { navigate("/auth"); return null; }
+        return (
+          <MyProfiles
+            onOpenProfile={(id) => setOpenedProfileId(id)}
+            onGoHome={() => handleTabChange("home")}
+          />
+        );
       case "profile":
-        if (!user) {
-          navigate("/auth");
-          return null;
-        }
+        if (!user) { navigate("/auth"); return null; }
         return <Profile />;
       case "settings":
         return <Settings />;
@@ -64,12 +74,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header user={user} onTabChange={setActiveTab} />
-      
+      <Header user={user} onTabChange={handleTabChange} />
+
       <main className="container mx-auto px-4 py-6">
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeTab}
+            key={openedProfileId ?? activeTab}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
@@ -81,9 +91,24 @@ const Index = () => {
       </main>
 
       <Footer />
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 };
+
+// Inline wrapper to render ProfilePassport without route params
+import { useEffect } from "react";
+const ProfilePassportInline = ({ profileId, onBack }: { profileId: string; onBack: () => void }) => {
+  // Push profileId into window history so useParams reads it
+  useEffect(() => {
+    const handler = (e: PopStateEvent) => { e.preventDefault(); onBack(); };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, [onBack]);
+  // Render via direct prop pattern: dynamic import-less inline
+  return <ProfilePassportWrapper profileId={profileId} onBack={onBack} />;
+};
+
+import ProfilePassportWrapper from "@/components/profiles/ProfilePassportWrapper";
 
 export default Index;
