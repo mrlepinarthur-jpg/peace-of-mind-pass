@@ -107,6 +107,54 @@ export type Database = {
         }
         Relationships: []
       }
+      family_profiles: {
+        Row: {
+          created_at: string
+          first_name: string
+          id: string
+          invite_email: string | null
+          invite_status: string
+          invite_token: string | null
+          is_self: boolean
+          last_name: string
+          linked_user_id: string | null
+          owner_id: string
+          passport_data: Json
+          relationship: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          invite_email?: string | null
+          invite_status?: string
+          invite_token?: string | null
+          is_self?: boolean
+          last_name?: string
+          linked_user_id?: string | null
+          owner_id: string
+          passport_data?: Json
+          relationship?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          invite_email?: string | null
+          invite_status?: string
+          invite_token?: string | null
+          is_self?: boolean
+          last_name?: string
+          linked_user_id?: string | null
+          owner_id?: string
+          passport_data?: Json
+          relationship?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       passports: {
         Row: {
           administrative_completed: boolean | null
@@ -361,6 +409,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_profile_invite: { Args: { _token: string }; Returns: string }
       get_auth_email: { Args: never; Returns: string }
     }
     Enums: {
