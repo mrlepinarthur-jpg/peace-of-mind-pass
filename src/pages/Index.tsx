@@ -10,7 +10,7 @@ import Profile from "./Profile";
 import Settings from "./Settings";
 import SharedPassports from "./SharedPassports";
 import MyProfiles from "./MyProfiles";
-import ProfilePassport from "./ProfilePassport";
+import ProfilePassportView from "@/components/profiles/ProfilePassportWrapper";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -20,11 +20,8 @@ const Index = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    if (user) {
-      setActiveTab("passport");
-    } else {
-      navigate("/auth");
-    }
+    if (user) setActiveTab("passport");
+    else navigate("/auth");
   };
 
   const handleTabChange = (tab: string) => {
@@ -34,8 +31,7 @@ const Index = () => {
 
   const renderContent = () => {
     if (openedProfileId) {
-      // ProfilePassport reads :profileId from url, fall back: render directly via prop-style hack
-      return <ProfilePassportInline profileId={openedProfileId} onBack={() => setOpenedProfileId(null)} />;
+      return <ProfilePassportView profileId={openedProfileId} onBack={() => setOpenedProfileId(null)} />;
     }
     switch (activeTab) {
       case "home":
@@ -75,7 +71,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header user={user} onTabChange={handleTabChange} />
-
       <main className="container mx-auto px-4 py-6">
         <AnimatePresence mode="wait">
           <motion.div
@@ -89,26 +84,10 @@ const Index = () => {
           </motion.div>
         </AnimatePresence>
       </main>
-
       <Footer />
       <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 };
-
-// Inline wrapper to render ProfilePassport without route params
-import { useEffect } from "react";
-const ProfilePassportInline = ({ profileId, onBack }: { profileId: string; onBack: () => void }) => {
-  // Push profileId into window history so useParams reads it
-  useEffect(() => {
-    const handler = (e: PopStateEvent) => { e.preventDefault(); onBack(); };
-    window.addEventListener("popstate", handler);
-    return () => window.removeEventListener("popstate", handler);
-  }, [onBack]);
-  // Render via direct prop pattern: dynamic import-less inline
-  return <ProfilePassportWrapper profileId={profileId} onBack={onBack} />;
-};
-
-import ProfilePassportWrapper from "@/components/profiles/ProfilePassportWrapper";
 
 export default Index;
