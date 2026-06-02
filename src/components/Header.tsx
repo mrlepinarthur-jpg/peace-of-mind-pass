@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Menu, User, X, FileText, Users, AlertTriangle, Scale, ShieldCheck, ScrollText, LogOut } from "lucide-react";
+import { Shield, Menu, User, X, FileText, Users, AlertTriangle, Scale, ShieldCheck, ScrollText, LogOut, UsersRound } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
