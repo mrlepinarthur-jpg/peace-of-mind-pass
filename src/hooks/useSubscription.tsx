@@ -140,7 +140,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
         canAccessHistory: isPremium,
         canAccessEmergency: isSerenityPlus,
         canAccessShared: isSerenityPlus,
-        maxProfiles: plan === "family" ? 5 : 1,
+        maxProfiles: { free: 1, solo: 2, serenity: 3, family: 5 }[plan],
         planName,
         loading,
       }}
