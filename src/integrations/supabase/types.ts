@@ -411,6 +411,13 @@ export type Database = {
     Functions: {
       accept_profile_invite: { Args: { _token: string }; Returns: string }
       get_auth_email: { Args: never; Returns: string }
+      get_my_shared_trusted_entries: {
+        Args: never
+        Returns: {
+          owner_user_id: string
+          trusted_name: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

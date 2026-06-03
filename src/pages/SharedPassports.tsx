@@ -30,10 +30,9 @@ const SharedPassports = () => {
     const fetchShared = async () => {
       try {
         // Find trusted_access entries where this user's email is the trusted person
+        // (via SECURITY DEFINER RPC so we don't expose security_answer/security_code)
         const { data: trustedEntries, error } = await supabase
-          .from("trusted_access")
-          .select("user_id, trusted_name")
-          .eq("trusted_email", user.email);
+          .rpc("get_my_shared_trusted_entries");
 
         if (error) throw error;
 
@@ -43,6 +42,7 @@ const SharedPassports = () => {
           return;
         }
 
+
         const results: SharedPassport[] = [];
 
         for (const entry of trustedEntries) {
@@ -50,7 +50,7 @@ const SharedPassports = () => {
           const { data: emergencyReq } = await supabase
             .from("emergency_access_requests")
             .select("status, access_token, access_expires_at")
-            .eq("owner_user_id", entry.user_id)
+            .eq("owner_user_id", entry.owner_user_id)
             .eq("trusted_email", user.email)
             .in("status", ["granted", "waiting"])
             .order("created_at", { ascending: false })
@@ -65,13 +65,13 @@ const SharedPassports = () => {
           const { data: profile } = await supabase
             .from("profiles")
             .select("full_name, email")
-            .eq("user_id", entry.user_id)
+            .eq("user_id", entry.owner_user_id)
             .maybeSingle();
 
           results.push({
             ownerName: profile?.full_name || entry.trusted_name || "Utilisateur",
             ownerEmail: profile?.email || "",
-            userId: entry.user_id,
+            userId: entry.owner_user_id,
             hasActiveEmergency: isGranted || false,
             accessToken: isGranted ? activeReq?.access_token || null : null,
           });
