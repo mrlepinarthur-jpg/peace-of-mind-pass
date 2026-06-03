@@ -148,6 +148,29 @@ const Profile = ({ onTabChange }: { onTabChange?: (tab: string) => void } = {}) 
         </CardContent>
       </Card>
 
+      {/* Mes profils */}
+      <Card
+        className="cursor-pointer hover:bg-muted/40 transition-colors"
+        onClick={() => onTabChange?.("my_profiles")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter") onTabChange?.("my_profiles"); }}
+      >
+        <CardContent className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <UsersRound className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Mes profils</p>
+              <p className="text-xs text-muted-foreground">Gérez les passeports de vos proches</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+        </CardContent>
+      </Card>
+
+
       {/* Informations personnelles */}
       <Card>
         <CardHeader>
