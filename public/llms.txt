@@ -1,0 +1,13 @@
+# Passeport de Vie
+
+> Coffre-fort numérique français qui centralise les informations administratives, médicales et personnelles essentielles pour soulager vos proches en cas d'urgence ou de décès.
+
+Passeport de Vie est une application web sécurisée (RGPD, hébergée en Europe) qui permet à un utilisateur de regrouper en un seul endroit ses documents importants, contacts de confiance, volontés personnelles et accès numériques, puis de les transmettre à une personne de confiance via un système d'accès d'urgence vérifié.
+
+## Pages
+
+- [Accueil](/): Présentation du service, fonctionnalités et tarifs (Free, Solo, Sérénité, Famille).
+- [Accès d'urgence](/emergency-access): Portail pour les personnes de confiance souhaitant accéder au passeport d'un titulaire.
+- [Mentions légales](/mentions-legales): Informations légales de l'éditeur.
+- [Politique de confidentialité](/politique-confidentialite): Traitement des données personnelles et conformité RGPD.
+- [CGU](/cgu): Conditions générales d'utilisation.
