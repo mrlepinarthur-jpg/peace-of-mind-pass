@@ -18,7 +18,7 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
-const Profile = () => {
+const Profile = ({ onTabChange }: { onTabChange?: (tab: string) => void } = {}) => {
   const { user, signOut } = useAuth();
   const { planName, isPremium } = useSubscription();
   const navigate = useNavigate();
