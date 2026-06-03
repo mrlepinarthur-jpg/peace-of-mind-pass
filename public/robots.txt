@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://peace-of-mind-pass.lovable.app/sitemap.xml
