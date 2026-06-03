@@ -30,10 +30,9 @@ const SharedPassports = () => {
     const fetchShared = async () => {
       try {
         // Find trusted_access entries where this user's email is the trusted person
+        // (via SECURITY DEFINER RPC so we don't expose security_answer/security_code)
         const { data: trustedEntries, error } = await supabase
-          .from("trusted_access")
-          .select("user_id, trusted_name")
-          .eq("trusted_email", user.email);
+          .rpc("get_my_shared_trusted_entries");
 
         if (error) throw error;
 
@@ -42,6 +41,7 @@ const SharedPassports = () => {
           setLoading(false);
           return;
         }
+
 
         const results: SharedPassport[] = [];
 
