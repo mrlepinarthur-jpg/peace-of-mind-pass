@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Home, FileText, Settings, User, ShieldCheck } from "lucide-react";
+import { Home, FileText, Settings, User, ShieldCheck, UsersRound } from "lucide-react";
 
 interface BottomNavProps {
   activeTab: string;
@@ -9,10 +9,12 @@ interface BottomNavProps {
 const tabs = [
   { id: "home", icon: Home, label: "Accueil" },
   { id: "passport", icon: FileText, label: "Passeport" },
+  { id: "my_profiles", icon: UsersRound, label: "Profils" },
   { id: "shared", icon: ShieldCheck, label: "Partagés" },
   { id: "profile", icon: User, label: "Profil" },
   { id: "settings", icon: Settings, label: "Réglages" },
 ];
+
 
 const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
   return (
@@ -32,8 +34,9 @@ const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className="relative flex flex-col items-center justify-center w-16 h-full transition-colors"
+                className="relative flex flex-col items-center justify-center flex-1 min-w-0 h-full transition-colors"
               >
+
                 <motion.div
                   animate={{
                     scale: isActive ? 1.1 : 1,
