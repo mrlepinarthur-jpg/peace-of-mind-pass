@@ -115,7 +115,7 @@ const ResetPassword = () => {
       <div className="p-4">
         <Button
           variant="ghost"
-          size="icon"
+          size="icon" aria-label="Retour"
           onClick={() => navigate("/auth")}
           className="text-muted-foreground"
         >
@@ -172,7 +172,7 @@ const ResetPassword = () => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
+             aria-label="Afficher ou masquer le mot de passe">
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
               ) : (
@@ -196,7 +196,7 @@ const ResetPassword = () => {
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
+             aria-label="Afficher ou masquer le mot de passe">
               {showConfirmPassword ? (
                 <EyeOff className="w-5 h-5" />
               ) : (
