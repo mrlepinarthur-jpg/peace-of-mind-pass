@@ -12,8 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { 
-  User, Mail, Calendar, LogOut, Save, KeyRound, Crown, Sparkles
+  User, Mail, Calendar, LogOut, Save, KeyRound, Crown, Sparkles, UsersRound, ChevronRight
 } from "lucide-react";
+
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
