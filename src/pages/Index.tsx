@@ -52,7 +52,8 @@ const Index = () => {
         );
       case "profile":
         if (!user) { navigate("/auth"); return null; }
-        return <Profile />;
+        return <Profile onTabChange={handleTabChange} />;
+
       case "settings":
         return <Settings />;
       default:
