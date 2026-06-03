@@ -50,7 +50,7 @@ const SharedPassports = () => {
           const { data: emergencyReq } = await supabase
             .from("emergency_access_requests")
             .select("status, access_token, access_expires_at")
-            .eq("owner_user_id", entry.user_id)
+            .eq("owner_user_id", entry.owner_user_id)
             .eq("trusted_email", user.email)
             .in("status", ["granted", "waiting"])
             .order("created_at", { ascending: false })
@@ -65,13 +65,13 @@ const SharedPassports = () => {
           const { data: profile } = await supabase
             .from("profiles")
             .select("full_name, email")
-            .eq("user_id", entry.user_id)
+            .eq("user_id", entry.owner_user_id)
             .maybeSingle();
 
           results.push({
             ownerName: profile?.full_name || entry.trusted_name || "Utilisateur",
             ownerEmail: profile?.email || "",
-            userId: entry.user_id,
+            userId: entry.owner_user_id,
             hasActiveEmergency: isGranted || false,
             accessToken: isGranted ? activeReq?.access_token || null : null,
           });
