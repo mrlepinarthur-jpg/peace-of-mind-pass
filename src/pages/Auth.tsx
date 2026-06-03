@@ -159,7 +159,7 @@ const Auth = () => {
         <div className="p-4">
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Retour"
             onClick={() => {
               setResetEmailSent(false);
               setMode("login");
@@ -225,7 +225,7 @@ const Auth = () => {
         <div className="p-4">
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Retour"
             onClick={() => setMode("login")}
             className="text-muted-foreground"
           >
@@ -316,7 +316,7 @@ const Auth = () => {
       <div className="p-4">
         <Button
           variant="ghost"
-          size="icon"
+          size="icon" aria-label="Retour"
           onClick={() => navigate("/")}
           className="text-muted-foreground"
         >
@@ -401,7 +401,7 @@ const Auth = () => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
+             aria-label="Afficher ou masquer le mot de passe">
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
               ) : (

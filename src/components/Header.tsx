@@ -67,11 +67,12 @@ const Header = ({ showBack, onBack, user, onTabChange }: HeaderProps) => {
               <Shield className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-bold text-foreground text-lg leading-tight">
+              <div className="font-bold text-foreground text-lg leading-tight">
                 Passeport de Vie
-              </h1>
+              </div>
               <p className="text-xs text-muted-foreground">Votre sérénité administrative</p>
             </div>
+
           </div>
 
           <div className="flex items-center gap-2">
@@ -84,9 +85,10 @@ const Header = ({ showBack, onBack, user, onTabChange }: HeaderProps) => {
                 Connexion
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
+            <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}>
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
+
           </div>
         </div>
       </motion.header>
