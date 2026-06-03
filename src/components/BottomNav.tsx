@@ -34,8 +34,9 @@ const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className="relative flex flex-col items-center justify-center w-16 h-full transition-colors"
+                className="relative flex flex-col items-center justify-center flex-1 min-w-0 h-full transition-colors"
               >
+
                 <motion.div
                   animate={{
                     scale: isActive ? 1.1 : 1,
