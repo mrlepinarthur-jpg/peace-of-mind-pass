@@ -43,16 +43,16 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
+      // Note: security_code / security_answer are write-only (not exposed via the API).
+      // The owner can re-enter them to update, but we never read them back.
       const { data: ta } = await supabase
         .from("trusted_access")
-        .select("*")
+        .select("security_method, security_question")
         .eq("user_id", user.id)
         .maybeSingle();
       if (ta) {
         setSecurityMethod(ta.security_method as "none" | "code" | "question");
-        setSecurityCode(ta.security_code || "");
         setSecurityQuestion(ta.security_question || "");
-        setSecurityAnswer(ta.security_answer || "");
       }
     };
     load();
