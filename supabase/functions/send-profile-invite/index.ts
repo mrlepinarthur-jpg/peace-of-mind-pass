@@ -77,9 +77,9 @@ Deno.serve(async (req) => {
     }
 
     // Send email via Resend
-    const resendKey = Deno.env.get("RESEND_API_KEY");
-    const origin = req.headers.get("origin") || "https://peace-of-mind-pass.lovable.app";
-    const acceptUrl = `${origin}/accept-invite?token=${encodeURIComponent(token)}`;
+    // Hardcoded app base URL — never trust the request Origin header for email links
+    const APP_BASE_URL = "https://peace-of-mind-pass.lovable.app";
+    const acceptUrl = `${APP_BASE_URL}/accept-invite?token=${encodeURIComponent(token)}`;
 
     if (resendKey) {
       const html = `
