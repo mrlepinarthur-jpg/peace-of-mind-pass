@@ -94,9 +94,9 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
         .maybeSingle();
 
       if (existing) {
-        await supabase.from("trusted_access").update(accessData).eq("user_id", user.id);
+        await supabase.from("trusted_access").update(accessData as any).eq("user_id", user.id);
       } else {
-        await supabase.from("trusted_access").insert(accessData);
+        await supabase.from("trusted_access").insert(accessData as any);
       }
 
       toast({
