@@ -68,15 +68,24 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
 
     // Save trusted_access config
     if (user && formData.fullName.trim() && formData.email.trim()) {
-      const accessData = {
+      const accessData: Record<string, unknown> = {
         user_id: user.id,
         trusted_name: formData.fullName.trim(),
         trusted_email: formData.email.toLowerCase().trim(),
         security_method: securityMethod,
-        security_code: securityMethod === "code" ? securityCode : null,
         security_question: securityMethod === "question" ? securityQuestion : null,
-        security_answer: securityMethod === "question" ? securityAnswer : null,
       };
+      // Only overwrite secrets when the owner explicitly typed a new value
+      if (securityMethod === "code" && securityCode.trim()) {
+        accessData.security_code = securityCode.trim();
+      } else if (securityMethod !== "code") {
+        accessData.security_code = null;
+      }
+      if (securityMethod === "question" && securityAnswer.trim()) {
+        accessData.security_answer = securityAnswer.trim();
+      } else if (securityMethod !== "question") {
+        accessData.security_answer = null;
+      }
 
       const { data: existing } = await supabase
         .from("trusted_access")
