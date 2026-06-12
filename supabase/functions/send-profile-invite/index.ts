@@ -77,9 +77,17 @@ Deno.serve(async (req) => {
     }
 
     // Send email via Resend
+    const resendKey = Deno.env.get("RESEND_API_KEY");
     // Hardcoded app base URL — never trust the request Origin header for email links
     const APP_BASE_URL = "https://peace-of-mind-pass.lovable.app";
     const acceptUrl = `${APP_BASE_URL}/accept-invite?token=${encodeURIComponent(token)}`;
+
+    // HTML-escape user-supplied values used inside the email body
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c] as string));
+    const safeFirstName = esc(firstName);
+    const safeOwnerName = esc(ownerName);
 
     if (resendKey) {
       const html = `
