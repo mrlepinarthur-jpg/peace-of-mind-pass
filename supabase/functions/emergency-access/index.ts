@@ -578,16 +578,54 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ACTION 8: Send family invitation email
+    // ACTION 8: Send family invitation email (authenticated)
     if (action === "send_family_invite") {
-      const { memberEmail, memberName, ownerName } = params;
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: "Non authentifié" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Non authentifié" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { memberEmail, memberName } = params;
+      if (typeof memberEmail !== "string" || typeof memberName !== "string" ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberEmail) ||
+          memberName.length > 100 || memberEmail.length > 255) {
+        return new Response(JSON.stringify({ error: "Paramètres invalides" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Resolve owner display name server-side (do not trust client input)
+      const { data: ownerProfile } = await supabase
+        .from("profiles")
+        .select("first_name, last_name, full_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const resolvedOwnerName = [ownerProfile?.first_name, ownerProfile?.last_name]
+        .filter(Boolean).join(" ") || ownerProfile?.full_name || user.email || "Un proche";
+
+      const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      }[c] as string));
+
       await sendEmail(
         memberEmail,
         "📩 Invitation — Passeport de Vie",
         `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:30px">
           <h2 style="color:#1a1a2e">Passeport de Vie — Invitation</h2>
-          <p>Bonjour <strong>${memberName}</strong>,</p>
-          <p><strong>${ownerName}</strong> vous a invité(e) à accéder à son Passeport de Vie en tant que membre famille.</p>
+          <p>Bonjour <strong>${esc(memberName)}</strong>,</p>
+          <p><strong>${esc(resolvedOwnerName)}</strong> vous a invité(e) à accéder à son Passeport de Vie en tant que membre famille.</p>
           <p>Créez votre compte sur Passeport de Vie pour accéder aux informations partagées avec vous.</p>
           <p style="color:#666;font-size:14px;margin-top:20px">Cet accès est en lecture seule et sécurisé.</p>
         </div>`

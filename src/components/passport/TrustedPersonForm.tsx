@@ -43,16 +43,16 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
+      // Note: security_code / security_answer are write-only (not exposed via the API).
+      // The owner can re-enter them to update, but we never read them back.
       const { data: ta } = await supabase
         .from("trusted_access")
-        .select("*")
+        .select("security_method, security_question")
         .eq("user_id", user.id)
         .maybeSingle();
       if (ta) {
         setSecurityMethod(ta.security_method as "none" | "code" | "question");
-        setSecurityCode(ta.security_code || "");
         setSecurityQuestion(ta.security_question || "");
-        setSecurityAnswer(ta.security_answer || "");
       }
     };
     load();
@@ -68,15 +68,24 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
 
     // Save trusted_access config
     if (user && formData.fullName.trim() && formData.email.trim()) {
-      const accessData = {
+      const accessData: Record<string, unknown> = {
         user_id: user.id,
         trusted_name: formData.fullName.trim(),
         trusted_email: formData.email.toLowerCase().trim(),
         security_method: securityMethod,
-        security_code: securityMethod === "code" ? securityCode : null,
         security_question: securityMethod === "question" ? securityQuestion : null,
-        security_answer: securityMethod === "question" ? securityAnswer : null,
       };
+      // Only overwrite secrets when the owner explicitly typed a new value
+      if (securityMethod === "code" && securityCode.trim()) {
+        accessData.security_code = securityCode.trim();
+      } else if (securityMethod !== "code") {
+        accessData.security_code = null;
+      }
+      if (securityMethod === "question" && securityAnswer.trim()) {
+        accessData.security_answer = securityAnswer.trim();
+      } else if (securityMethod !== "question") {
+        accessData.security_answer = null;
+      }
 
       const { data: existing } = await supabase
         .from("trusted_access")
@@ -85,9 +94,9 @@ export const TrustedPersonForm = ({ data, onSave }: TrustedPersonFormProps) => {
         .maybeSingle();
 
       if (existing) {
-        await supabase.from("trusted_access").update(accessData).eq("user_id", user.id);
+        await supabase.from("trusted_access").update(accessData as any).eq("user_id", user.id);
       } else {
-        await supabase.from("trusted_access").insert(accessData);
+        await supabase.from("trusted_access").insert(accessData as any);
       }
 
       toast({

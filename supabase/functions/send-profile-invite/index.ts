@@ -78,15 +78,23 @@ Deno.serve(async (req) => {
 
     // Send email via Resend
     const resendKey = Deno.env.get("RESEND_API_KEY");
-    const origin = req.headers.get("origin") || "https://peace-of-mind-pass.lovable.app";
-    const acceptUrl = `${origin}/accept-invite?token=${encodeURIComponent(token)}`;
+    // Hardcoded app base URL — never trust the request Origin header for email links
+    const APP_BASE_URL = "https://peace-of-mind-pass.lovable.app";
+    const acceptUrl = `${APP_BASE_URL}/accept-invite?token=${encodeURIComponent(token)}`;
+
+    // HTML-escape user-supplied values used inside the email body
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c] as string));
+    const safeFirstName = esc(firstName);
+    const safeOwnerName = esc(ownerName);
 
     if (resendKey) {
       const html = `
         <div style="font-family: Arial, sans-serif; max-width: 560px; margin: auto; color: #1a1a1a;">
-          <h2 style="color:#0c2340;">${ownerName} vous invite à créer votre Passeport de Vie</h2>
-          <p>Bonjour ${firstName},</p>
-          <p>${ownerName} souhaite que vous rejoigniez son cercle de confiance sur <strong>Passeport de Vie</strong>,
+          <h2 style="color:#0c2340;">${safeOwnerName} vous invite à créer votre Passeport de Vie</h2>
+          <p>Bonjour ${safeFirstName},</p>
+          <p>${safeOwnerName} souhaite que vous rejoigniez son cercle de confiance sur <strong>Passeport de Vie</strong>,
           une application qui aide à centraliser ses informations essentielles pour ses proches.</p>
           <p style="margin: 24px 0;">
             <a href="${acceptUrl}" style="background:#0c2340;color:white;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600;">
