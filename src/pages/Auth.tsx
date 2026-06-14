@@ -373,19 +373,7 @@ const Auth = () => {
           onSubmit={handleSubmit}
           className="w-full max-w-sm space-y-4"
         >
-          {mode === "signup" && (
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Votre nom complet"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="pl-10 h-12 rounded-xl"
-                required={mode === "signup"}
-              />
-            </div>
-          )}
+          {/* Simplified signup: only email + password */}
 
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
