@@ -9,6 +9,7 @@ import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface HomeProps {
   onGetStarted: () => void;
@@ -81,6 +82,7 @@ const pricingPlans = [
 
 const Home = ({ onGetStarted }: HomeProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
@@ -104,7 +106,7 @@ const Home = ({ onGetStarted }: HomeProps) => {
   }, [user]);
 
   return (
-    <div className="pb-24">
+    <div className={user ? "pb-24" : "pb-44"}>
       {/* Welcome message for logged-in users */}
       {user && (
         <motion.div
@@ -189,6 +191,35 @@ const Home = ({ onGetStarted }: HomeProps) => {
       </section>
 
       <Footer />
+
+      {/* Sticky bottom CTA for non-authenticated visitors */}
+      {!user && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="fixed bottom-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-lg border-t border-border shadow-elevated"
+        >
+          <div className="container mx-auto px-4 py-3 flex gap-2">
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex-1 border-2"
+              onClick={() => navigate("/auth")}
+            >
+              Se connecter
+            </Button>
+            <Button
+              variant="hero"
+              size="lg"
+              className="flex-1"
+              onClick={onGetStarted}
+            >
+              Créer mon passeport
+            </Button>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

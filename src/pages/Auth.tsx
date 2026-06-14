@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Shield, Mail, Lock, User, ArrowLeft, Eye, EyeOff, CheckCircle } from "lucide-react";
+import { Shield, Mail, Lock, ArrowLeft, Eye, EyeOff, CheckCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 type AuthMode = "login" | "signup" | "forgot-password";
 
 const Auth = () => {
-  const [mode, setMode] = useState<AuthMode>("login");
+  const [searchParams] = useSearchParams();
+  const initialMode: AuthMode = searchParams.get("mode") === "signup" ? "signup" : "login";
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -19,6 +21,12 @@ const Auth = () => {
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const m = searchParams.get("mode");
+    if (m === "signup") setMode("signup");
+    else if (m === "login") setMode("login");
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -339,18 +347,23 @@ const Auth = () => {
           transition={{ delay: 0.1 }}
           className="text-2xl font-bold text-foreground mb-2 text-center"
         >
-          {mode === "login" ? "Bon retour !" : "Créer un compte"}
+          {mode === "login" ? "Bon retour !" : "Créez votre passeport gratuit"}
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-muted-foreground text-center mb-8 max-w-xs"
+          className="text-muted-foreground text-center mb-8 max-w-xs flex items-center justify-center gap-1.5"
         >
-          {mode === "login"
-            ? "Connectez-vous pour retrouver votre passeport"
-            : "Sécurisez vos informations et synchronisez vos appareils"}
+          {mode === "login" ? (
+            "Connectez-vous pour retrouver votre passeport"
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 text-gold" />
+              Prêt en 30 secondes
+            </>
+          )}
         </motion.p>
 
         <motion.form
@@ -360,19 +373,7 @@ const Auth = () => {
           onSubmit={handleSubmit}
           className="w-full max-w-sm space-y-4"
         >
-          {mode === "signup" && (
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Votre nom complet"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="pl-10 h-12 rounded-xl"
-                required={mode === "signup"}
-              />
-            </div>
-          )}
+          {/* Simplified signup: only email + password */}
 
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -421,7 +422,7 @@ const Auth = () => {
               ? "Chargement..."
               : mode === "login"
               ? "Se connecter"
-              : "Créer mon compte"}
+              : "Créer mon compte gratuitement"}
           </Button>
 
           {mode === "login" && (

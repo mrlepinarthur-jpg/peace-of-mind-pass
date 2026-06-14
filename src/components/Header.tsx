@@ -81,8 +81,13 @@ const Header = ({ showBack, onBack, user, onTabChange }: HeaderProps) => {
                 <User className="w-4 h-4 text-sage" />
               </div>
             ) : (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
-                Connexion
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/auth")}
+                className="border-2 font-semibold shadow-sm"
+              >
+                Se connecter
               </Button>
             )}
             <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}>
