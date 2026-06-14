@@ -422,7 +422,7 @@ const Auth = () => {
               ? "Chargement..."
               : mode === "login"
               ? "Se connecter"
-              : "Créer mon compte"}
+              : "Créer mon compte gratuitement"}
           </Button>
 
           {mode === "login" && (
