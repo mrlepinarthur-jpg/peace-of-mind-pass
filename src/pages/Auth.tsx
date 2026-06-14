@@ -347,18 +347,23 @@ const Auth = () => {
           transition={{ delay: 0.1 }}
           className="text-2xl font-bold text-foreground mb-2 text-center"
         >
-          {mode === "login" ? "Bon retour !" : "Créer un compte"}
+          {mode === "login" ? "Bon retour !" : "Créez votre passeport gratuit"}
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-muted-foreground text-center mb-8 max-w-xs"
+          className="text-muted-foreground text-center mb-8 max-w-xs flex items-center justify-center gap-1.5"
         >
-          {mode === "login"
-            ? "Connectez-vous pour retrouver votre passeport"
-            : "Sécurisez vos informations et synchronisez vos appareils"}
+          {mode === "login" ? (
+            "Connectez-vous pour retrouver votre passeport"
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 text-gold" />
+              Prêt en 30 secondes
+            </>
+          )}
         </motion.p>
 
         <motion.form
