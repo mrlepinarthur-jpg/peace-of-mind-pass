@@ -27,6 +27,7 @@ const PricingCard = ({
   const { plan, setPlan } = useSubscription();
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const isCurrentPlan = plan === variant;
@@ -41,14 +42,21 @@ const PricingCard = ({
   const styles = variantStyles[variant];
 
   const handleSelectPlan = async () => {
+    // Free plan: just activate
     if (variant === "free") {
+      if (!user) {
+        navigate("/auth?mode=signup");
+        return;
+      }
       setPlan("free");
       toast({ title: "Formule Essentiel activée", description: "Vous utilisez maintenant la formule gratuite." });
       return;
     }
 
+    // Paid plans: require account first. Redirect unauthenticated users
+    // to signup (NEVER directly to Stripe from the home page).
     if (!user) {
-      toast({ title: "Connexion requise", description: "Veuillez vous connecter pour souscrire à un abonnement.", variant: "destructive" });
+      navigate(`/auth?mode=signup&plan=${variant}`);
       return;
     }
 
