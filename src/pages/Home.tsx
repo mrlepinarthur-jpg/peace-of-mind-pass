@@ -82,6 +82,7 @@ const pricingPlans = [
 
 const Home = ({ onGetStarted }: HomeProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
@@ -105,7 +106,7 @@ const Home = ({ onGetStarted }: HomeProps) => {
   }, [user]);
 
   return (
-    <div className="pb-24">
+    <div className={user ? "pb-24" : "pb-44"}>
       {/* Welcome message for logged-in users */}
       {user && (
         <motion.div
