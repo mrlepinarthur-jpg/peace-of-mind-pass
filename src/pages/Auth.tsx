@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Shield, Mail, Lock, User, ArrowLeft, Eye, EyeOff, CheckCircle, Sparkles } from "lucide-react";
+import { Shield, Mail, Lock, ArrowLeft, Eye, EyeOff, CheckCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
