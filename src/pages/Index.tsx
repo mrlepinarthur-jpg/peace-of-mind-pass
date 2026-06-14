@@ -21,7 +21,7 @@ const Index = () => {
 
   const handleGetStarted = () => {
     if (user) setActiveTab("passport");
-    else navigate("/auth");
+    else navigate("/auth?mode=signup");
   };
 
   const handleTabChange = (tab: string) => {
