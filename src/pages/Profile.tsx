@@ -76,7 +76,8 @@ const Profile = ({ onTabChange }: { onTabChange?: (tab: string) => void } = {}) 
       .eq("user_id", user.id);
     
     if (error) {
-      toast({ title: "Erreur", description: "Impossible de sauvegarder les modifications.", variant: "destructive" });
+      console.error("Profile save error:", error);
+      toast({ title: "Erreur", description: error.message || "Impossible de sauvegarder les modifications.", variant: "destructive" });
     } else {
       toast({ title: "Profil mis à jour", description: "Vos informations ont été sauvegardées." });
     }
