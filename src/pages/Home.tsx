@@ -131,15 +131,32 @@ const Home = ({ onGetStarted }: HomeProps) => {
           <Shield className="w-10 h-10 text-primary-foreground" />
         </motion.div>
 
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-3xl font-bold text-foreground mb-3 leading-tight">
-          Votre sérénité,<br /><span className="text-navy">organisée.</span>
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-2xl font-bold text-foreground mb-3 leading-tight">
+          Parce que vos proches ne devraient pas avoir à tout expliquer dans les pires moments.
         </motion.h1>
 
-        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-muted-foreground mb-6 max-w-sm mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-sage-light rounded-2xl p-5 mb-6 max-w-sm mx-auto"
+        >
+          <p className="text-sm text-foreground leading-relaxed text-center">
+            En 2025, un proche a été hospitalisé d'urgence. En quelques heures, je me suis retrouvé seul face à une montagne administrative — sans guide, sans accès, sans préparation. Des semaines de recherches. Des droits perdus. Des portes fermées.
+          </p>
+          <p className="text-sm text-foreground leading-relaxed text-center mt-3">
+            J'ai créé Passeport de Vie pour que vos proches aient ce qu'il faut, quand il le faut — sans que vous ayez à tout expliquer.
+          </p>
+          <p className="text-sm text-muted-foreground text-center mt-3 italic">
+            — Arthur, fondateur
+          </p>
+        </motion.div>
+
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-muted-foreground mb-6 max-w-sm mx-auto">
           Centralisez vos informations essentielles pour soulager vos proches en cas d'imprévu.
         </motion.p>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-col gap-3">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex flex-col gap-3">
           <Button variant="hero" size="lg" onClick={onGetStarted} className="mx-auto">
             Créer mon passeport
             <ArrowRight className="w-5 h-5" />
