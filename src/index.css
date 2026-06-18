@@ -73,6 +73,15 @@
     --popover: 220 25% 14%;
     --popover-foreground: 45 30% 95%;
 
+    /* Custom tokens — remap for dark mode readability */
+    --sage: 155 35% 65%;
+    --sage-light: 155 25% 22%;
+    --navy: 220 60% 80%;
+    --navy-light: 220 50% 70%;
+    --cream: 220 30% 14%;
+    --gold: 35 75% 65%;
+    --gold-light: 35 30% 25%;
+
     --primary: 155 25% 50%;
     --primary-foreground: 220 30% 10%;
 
