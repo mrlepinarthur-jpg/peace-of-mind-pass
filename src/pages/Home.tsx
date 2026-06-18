@@ -176,7 +176,7 @@ const Home = ({ onGetStarted }: HomeProps) => {
             Le <strong className="text-foreground">Passeport de Vie</strong> est un dossier administratif d'urgence qui centralise toutes les informations dont vos proches auront besoin en cas :
           </p>
           <ul className="space-y-2">
-            {["D'hospitalisation", "D'incapacité temporaire", "De décès"].map((item, i) => (
+            {["D'hospitalisation", "D'incapacité temporaire", "De perte totale et irréversible d'autonomie", "De décès"].map((item, i) => (
               <li key={i} className="flex items-center gap-2 text-sm">
                 <CheckCircle className="w-4 h-4 text-sage flex-shrink-0" />
                 <span className="text-foreground">{item}</span>
